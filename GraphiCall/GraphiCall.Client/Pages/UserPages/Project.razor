@@ -1,0 +1,903 @@
+﻿@page "/project"
+@using Microsoft.AspNetCore.Authorization
+@using GraphiCall.Client.DTO
+@using GraphiCall.Client
+@using System.Security.Claims
+@using System.Globalization
+@using System.Text.Json
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JSRuntime
+@attribute [Authorize]
+@rendermode InteractiveAuto
+
+<PageTitle>Project</PageTitle>
+
+@if (!string.IsNullOrEmpty(Message))
+{
+    var alertClass = IsErrorMessage ? "alert-danger" : "alert-success";
+    <div class=@($"alert {alertClass}")>@Message</div>
+}
+
+@if (!isProjectsExists)
+{
+      <div class="container mt-3">
+        <form>
+            <div class="form-group">
+                <label for="project-name">Project name </label>
+                <input type="text" class="form-control" id="project-name" @bind="@projectDto.Name">
+            </div>
+            <div class="form-group">
+                <label for="project-description">Project description</label>
+                <textarea class="form-control" id="project-description" rows="3" @bind="@projectDto.Description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="project-name">Client name </label>
+                <input type="text" class="form-control" id="project-name" @bind="@projectDto.ClientName">
+            </div>
+            <div class="form-group">
+                <label for="project-start-date">Start date of project</label>
+                <input type="date" class="form-control" id="project-start-date" @bind="@projectDto.StartDate">
+            </div>
+            <div class="form-group">
+                <label for="project-end-date">End date of project</label>
+                <input type="date" class="form-control" id="project-end-date" @bind="@projectDto.EndDate">
+            </div>
+            <div class="form-group">
+                <h1>Create Budget</h1>
+                <label for="budget-total-income">Total amount of cash</label>
+                <input type="number" class="form-control" id="budget-total-income" @bind="@budgetDto.TotalIncome">
+            </div>
+            <div class="form-group">
+                <label for="budget-total-income">Budget period</label>
+                <input type="date" class="form-control" id="budget-total-income" @bind="@budgetDto.BudgetPeriod">
+            </div>
+
+            <button type="button" class="btn btn-primary" @onclick="AddProjectWithBudget">Utwórz projekt</button>
+        </form>
+    </div>
+
+}
+else
+{
+    <div class="container mt-3">
+        @foreach (var project in projects)
+        {
+            <div class="card my-2">
+                <div class="card-body">
+                    <h5 class="card-title">@project.Name</h5>
+                    <p class="card-text">@project.Description</p>
+                    <button class="btn btn-primary" @onclick="() => OpenUpdateModel(project)">Aktualizuj</button>
+                    <button class="btn btn-info" @onclick="() => OpenBudgetModal(project)">Dane o Budżecie</button>
+                    <button class="btn btn-warning" @onclick="() => OpenTasksModal(project)">Zadania</button>
+                    <button class="btn btn-danger" @onclick="() => DeleteProject(project)">Usuń</button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (showUpdateModal)
+{
+    <div class="modal" tabindex="-1" style="display:block" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update project</h5>
+                    <button type="button" class="close" @onclick="CloseUpdateModel"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control mb-2" @bind="selectedProject.Name" placeholder="Nazwa projektu">
+                    <textarea class="form-control mb-2" @bind="selectedProject.Description" placeholder="Opis projektu"></textarea>
+                    @* Dodaj więcej pól do edycji według potrzeb *@
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" @onclick="() => UpdateProject(selectedProject)">Zapisz zmiany</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseUpdateModel">Zamknij</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop fade show"></div>
+}
+
+
+@if (showTasksModal)
+{
+    <div class="modal show" style="display:block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Project Tasks</h5>
+                    <button type="button" class="close" @onclick="CloseTasksModal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formularz dodawania nowego zadania -->
+                    <div class="form-group">
+                        <label for="taskTitle">Title</label>
+                        <input type="text" class="form-control" id="taskTitle" @bind="@newTask.Title">
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDescription">Description</label>
+                        <textarea class="form-control" id="taskDescription" rows="3" @bind="@newTask.Description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDueDate">Due Date</label>
+                        <input type="date" class="form-control" id="taskDueDate" @bind="@newTask.DueDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="taskStatus">Status</label>
+                        <select class="form-control" id="taskStatus" @bind="@newTask.Status">
+                            @foreach (var status in Enum.GetValues(typeof(GraphiCall.Client.DTO.TaskStatus)))
+                            {
+                                <option value="@status.ToString()">@status</option>
+                            }
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" @onclick="HandleCreateTask">Add Task</button>
+
+                    <hr />
+
+                    <!-- Lista istniejących zadań -->
+                    @if (selectedTasks.Any())
+                    {
+                        foreach (var task in selectedTasks)
+                        {
+                            <div class="p-2 border-bottom">
+                                <strong>@task.Title</strong> - @task.Description <br />
+                                Due: @task.DueDate.ToString("yyyy-MM-dd") <br />
+                                Status: @task.Status.ToString()
+                                   <button class="btn btn-primary" @onclick="() => OpenUpdateTaskModal(task)">Update</button>
+                <button class="btn btn-danger" @onclick="() => DeleteTask(task)">Delete</button>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div>No tasks found for this project.</div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CloseTasksModal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}
+
+@if (showUpdateTaskModal)
+{
+    <div class="modal show" style="display:block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Task</h5>
+                    <button type="button" class="close" @onclick="CloseUpdateTaskModal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="updateTaskTitle">Title</label>
+                        <input type="text" class="form-control" id="updateTaskTitle" @bind="selectedTaskForUpdate.Title">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateTaskDescription">Description</label>
+                        <textarea class="form-control" id="updateTaskDescription" rows="3" @bind="selectedTaskForUpdate.Description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateTaskDueDate">Due Date</label>
+                        <input type="date" class="form-control" id="updateTaskDueDate" @bind="selectedTaskForUpdate.DueDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="updateTaskStatus">Status</label>
+                        <select class="form-control" id="updateTaskStatus" @bind="selectedTaskForUpdate.Status">
+                            @foreach (var status in Enum.GetValues(typeof(GraphiCall.Client.DTO.TaskStatus)))
+                            {
+                                <option value="@status">@status</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" @onclick="() => UpdateTask(selectedTaskForUpdate)">Save changes</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseUpdateTaskModal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}
+
+@if (showBudgetModal && selectedBudget != null)
+{
+    <div class="modal show" style="display:block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Budget Details</h5>
+                    <button type="button" class="close" @onclick="CloseBudgetModal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="budgetPeriod">Budget Period</label>
+                            <p>Budget period: @selectedBudget.BudgetPeriod</p>
+                        </div>
+                    </form>
+                    <p>Total Income: @selectedBudget.TotalIncome</p>
+                    <p>Total Expenses: @selectedBudget.TotalExpenses</p>
+                    <p>Balance: @selectedBudget.Balance</p>
+
+                    <hr />
+                    <h5>Expenses</h5>
+                    @if (selectedBudget.Expenses != null && selectedBudget.Expenses.Any())
+                    {
+                        foreach (var expense in selectedBudget.Expenses)
+                        {
+                            <div>
+                                <strong>@expense.Category:</strong> @expense.Amount (Date: @expense.DateIncurred.ToString("yyyy-MM-dd"))
+                                <button class="btn btn-primary btn-sm" @onclick="() => OpenUpdateExpenseModal(expense)">Update</button>
+                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteExpense(expense)">Delete</button>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div>No expenses found for this budget.</div>
+                    }
+                </div>
+                <button type="button" class="btn btn-primary" @onclick="OpenAddExpenseModal">Add Expense</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="() => UpdateBudget(selectedBudget)">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseBudgetModal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}
+
+@if (showAddExpenseModal)
+{
+    <div class="modal show" style="display:block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Expense</h5>
+                    <button type="button" class="close" @onclick="CloseAddExpenseModal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <!-- Pola formularza do dodania wydatku -->
+                        <div class="form-group">
+                            <label for="expenseCategory">Category</label>
+                            <input type="text" class="form-control" id="expenseCategory" @bind="@newExpense.Category">
+                        </div>
+                        <div class="form-group">
+                            <label for="expenseAmount">Amount</label>
+                            <input type="number" class="form-control" id="expenseAmount" @bind="@newExpense.Amount">
+                        </div>
+                        <div class="form-group">
+                            <label for="expenseDate">Date</label>
+                            <input type="date" class="form-control" id="expenseDate" @bind="@newExpense.DateIncurred">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" @onclick="() => CreateExpense(newExpense)">Add Expense</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseAddExpenseModal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}
+
+@if (showUpdateExpenseModal && selectedExpenseForUpdate != null)
+{
+    <div class="modal show" style="display:block" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Expense</h5>
+                    <button type="button" class="close" @onclick="CloseUpdateExpenseModal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <!-- Pola formularza do aktualizacji wydatku -->
+                        <div class="form-group">
+                            <label for="updateExpenseAmount">Amount</label>
+                            <input type="number" class="form-control" id="updateExpenseAmount" @bind="@selectedExpenseForUpdate.Amount">
+                        </div>
+                        <div class="form-group">
+                            <label for="updateExpenseDate">Date</label>
+                            <input type="date" class="form-control" id="updateExpenseDate" @bind="@selectedExpenseForUpdate.DateIncurred">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" @onclick="() => UpdateExpense(selectedExpenseForUpdate)">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseUpdateExpenseModal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-backdrop show"></div>
+}
+
+
+@code {
+    //ON BUILDING SETUP -----------------------------------------------------------------------------
+    private string userId = null!;
+
+    //LIST
+    private List<ProjectDto> projects = new List<ProjectDto>();
+    private List<ProjectTaskDto> selectedTasks = new List<ProjectTaskDto>();
+
+    //CREATE
+    private ProjectDto projectDto = new ProjectDto
+        {
+            StartDate = DateTime.Now,
+            EndDate = DateTime.Now
+        };
+    private BudgetDto budgetDto = new BudgetDto()
+        {
+            BudgetPeriod = DateTime.Now
+        };
+    private ProjectTaskDto newTask = new ProjectTaskDto()
+        {
+            DueDate = DateTime.Now
+        };
+    private ExpenseDto newExpense = new ExpenseDto()
+        {
+            DateIncurred = DateTime.Now
+        };
+
+    //EDIT PROJECT
+    private ProjectDto? selectedProject;
+    private bool showUpdateModal = false;
+
+    //EDIT TASKS
+    private ProjectTaskDto? selectedTaskForUpdate;
+    private bool showUpdateTaskModal = false;
+
+    //CHECKS
+    private bool isProjectsExists = false;
+
+    //ALLERT
+    private string Message = string.Empty;
+    private bool IsErrorMessage = false;
+
+    //BUDGET MODEL
+    private BudgetDto selectedBudget = new BudgetDto();
+    private bool showBudgetModal = false;
+
+    //TASKS MODEL
+    private bool showTasksModal = false;
+
+    //EXPENSE MODEL
+    private bool showAddExpenseModal = false;
+
+    //UPDATE EXPENSE MODEL
+    private ExpenseDto? selectedExpenseForUpdate;
+    private bool showUpdateExpenseModal = false;
+
+    //SETUP METHODS
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
+
+        await CheckIfUserHasProjects();
+
+        if (isProjectsExists)
+        {
+            await LoadProjects();
+        }
+
+    }
+
+    private async Task CheckIfUserHasProjects()
+    {
+        try
+        {
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var response = await Http.GetAsync(Navigation.BaseUri + $"projects/hasProjects/{userId}");
+                if (response.IsSuccessStatusCode)
+                {
+                    isProjectsExists = await response.Content.ReadFromJsonAsync<bool>();
+                }
+                else
+                {
+                    IsErrorMessage = true;
+                    Message = "Failed to check projects with budget.";
+                    _ = HideMessageAfterDelay();
+                }
+            }
+            else
+            {
+                IsErrorMessage = true;
+                Message = "Unauthorized.";
+                _ = HideMessageAfterDelay();
+            }
+        }
+        catch (Exception ex)
+        {
+            IsErrorMessage = true;
+            Message = $"An exception occured: {ex.Message}";
+            _ = HideMessageAfterDelay();  
+        }
+        StateHasChanged();
+    }
+
+    // PROJECT CRUD
+
+    private async Task AddProjectWithBudget()
+    {
+        projectDto.ApplicationUserId = userId;
+        projectDto.ProjectId = Guid.NewGuid().ToString();
+        budgetDto.BudgetId = Guid.NewGuid().ToString();
+        projectDto.BudgetId = budgetDto.BudgetId;
+        budgetDto.ProjectId = projectDto.ProjectId;
+
+        var projectResponse = await Http.PostAsJsonAsync(Navigation.BaseUri + $"projects/addProject/{userId}", projectDto);
+        if (projectResponse.IsSuccessStatusCode)
+        {
+            var budgetResponse = await Http.PostAsJsonAsync(Navigation.BaseUri + $"budgets/addBudget/{userId}/project/{projectDto.ProjectId}", budgetDto);
+            if (budgetResponse.IsSuccessStatusCode)
+            {
+                IsErrorMessage = false;
+                Message = "Project and its budget created successfully.";
+                await CheckIfUserHasProjects();
+                await LoadProjects();
+            }
+            else
+            {
+                IsErrorMessage = true;
+                Message = "Project created, but failed to create its budget.";
+            }
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = "Failed to create a project.";
+        }
+        _ = HideMessageAfterDelay();
+        StateHasChanged();
+    }
+
+    private async Task LoadProjects()
+    {
+        var response = await Http.GetAsync(Navigation.BaseUri + $"projects/getAllProjects/{userId}/with-everything");
+        if (response.IsSuccessStatusCode)
+        {
+            var jsonString = await response.Content.ReadAsStringAsync();
+            projects = JsonSerializer.Deserialize<List<ProjectDto>>(jsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true, IgnoreNullValues = true }) ?? new List<ProjectDto>();
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = "Failed to load projects.";
+            _ = HideMessageAfterDelay();
+        }
+        StateHasChanged();
+    }
+
+    private async Task UpdateProject(ProjectDto project)
+    {
+        var response = await Http.PutAsJsonAsync(Navigation.BaseUri + $"projects/updateProject/{userId}/{project.ProjectId}/Params", project);
+        if (response.IsSuccessStatusCode)
+        {
+            CloseUpdateModel();
+            await LoadProjects();
+            Message = "Project params updated successfully.";
+            IsErrorMessage = false;
+        }
+        else
+        {
+            Message = "Error occurred while updating the project params.";
+            IsErrorMessage = true;
+        }
+        _ = HideMessageAfterDelay();
+        StateHasChanged();
+    }
+
+    private async Task DeleteProject(ProjectDto project)
+    {
+        var response = await Http.DeleteAsync(Navigation.BaseUri + $"projects/deleteProject/{userId}/{project.ProjectId}");
+        if (response.IsSuccessStatusCode)
+        {
+            projects.Remove(project); 
+            Message = "Project deleted successfully.";
+            IsErrorMessage = false;
+            await CheckIfUserHasProjects();
+            if (isProjectsExists)
+            {
+                await LoadProjects(); 
+            }
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = "Error occurred while deleting the project.";
+        }
+        _ = HideMessageAfterDelay();
+        StateHasChanged();
+    }
+
+    // CRUD BUDGET
+
+
+    private async Task OpenBudgetModal(ProjectDto project)
+    {
+        // Pobieranie szczegółów budżetu
+        var budgetResponse = await Http.GetAsync(Navigation.BaseUri + $"budgets/getBudget/{userId}/project/{project.ProjectId}/budget/{project.BudgetId}");
+        if (budgetResponse.IsSuccessStatusCode)
+        {
+            var budgetJsonString = await budgetResponse.Content.ReadAsStringAsync();
+            selectedBudget = JsonSerializer.Deserialize<BudgetDto>(budgetJsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true, IgnoreNullValues = true });
+
+            // Oddzielne żądanie dla pobrania wydatków
+            await LoadExpenses(selectedBudget.BudgetId);
+
+            // Otwieranie modala z detalami budżetu
+            showBudgetModal = true;
+        }
+        else
+        {
+            // Obsługa błędu, gdy nie można pobrać szczegółów budżetu
+            showBudgetModal = false;
+            IsErrorMessage = true;
+            Message = "Error occurred while opening the budget modal.";
+            _ = HideMessageAfterDelay();
+        }
+        StateHasChanged();
+    }
+
+    private async Task UpdateBudget(BudgetDto budgetToUpdate)
+    {
+        if (budgetToUpdate is null)
+        {
+            throw new InvalidOperationException("Budget to update cannot be null.");
+        }
+
+        var response = await Http.PutAsJsonAsync(
+            Navigation.BaseUri + $"budgets/updateBudget/{userId}/project/{budgetToUpdate.ProjectId}/budget/{budgetToUpdate.BudgetId}",
+            budgetToUpdate);
+
+        if (response.IsSuccessStatusCode)
+        {
+            // Budżet został pomyślnie zaktualizowany
+            await OpenBudgetModal(selectedProject); // Załadowanie szczegółów budżetu ponownie
+            Message = "Budget updated successfully.";
+            IsErrorMessage = false;
+        }
+        else
+        {
+            // Obsługa błędu
+            IsErrorMessage = true;
+            Message = "Error occurred while updating the budget.";
+        }
+        _ = HideMessageAfterDelay();
+        StateHasChanged();
+    }
+
+
+    // CRUD TASK
+
+    private async Task OpenTasksModal(ProjectDto project)
+    {
+        selectedProject = project;
+        var response = await Http.GetAsync(Navigation.BaseUri + $"tasks/getTasks/{userId}/projects/{project.ProjectId}/tasks");
+        if (response.IsSuccessStatusCode)
+        {
+            var jsonString = await response.Content.ReadAsStringAsync();
+            selectedTasks = JsonSerializer.Deserialize<List<ProjectTaskDto>>(jsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<ProjectTaskDto>();
+            showTasksModal = true;
+        }
+        else
+        {
+            selectedTasks = new List<ProjectTaskDto>(); // Aby uniknąć błędów null reference przy braku zadań.
+            showTasksModal = true; // Pokaż modal nawet jeśli jest pusty, aby poinformować użytkownika o braku zadań.
+            IsErrorMessage = true;
+            Message = "Error occurred while trying to load tasks.";
+            _ = HideMessageAfterDelay();
+        }
+        StateHasChanged();
+    }
+
+    private async Task HandleCreateTask()
+    {
+        if (selectedProject == null)
+        {
+            throw new InvalidOperationException("No project selected.");
+        }
+
+        if (newTask == null)
+        {
+            newTask = new ProjectTaskDto();
+        }
+
+        newTask.ProjectTaskId = Guid.NewGuid().ToString();
+        newTask.ProjectID = selectedProject.ProjectId; // Założenie, że selectedProject jest aktualnie wybranym projektem
+
+        var response = await Http.PostAsJsonAsync(Navigation.BaseUri + $"tasks/addTask/{userId}/projects/{newTask.ProjectID}", newTask);
+        if (response.IsSuccessStatusCode)
+        {
+            // Zadanie zostało pomyślnie utworzone, więc należy załadować listę zadań ponownie
+            await OpenTasksModal(selectedProject);
+            newTask = new ProjectTaskDto(); // Resetowanie formularza
+        }
+        else
+        {
+            // Obsługa błędu
+            IsErrorMessage = true;
+            Message = "Error occurred while creating the task.";
+            _ = HideMessageAfterDelay();
+        }
+        StateHasChanged();
+    }
+
+    private async Task UpdateTask(ProjectTaskDto taskToUpdate)
+    {
+        if (taskToUpdate is null)
+        {
+            throw new InvalidOperationException("Task to update cannot be null.");
+        }
+
+        var response = await Http.PutAsJsonAsync(
+            Navigation.BaseUri + $"tasks/updateTask/{userId}/projects/{taskToUpdate.ProjectID}/task/{taskToUpdate.ProjectTaskId}",
+            taskToUpdate);
+
+        if (response.IsSuccessStatusCode)
+        {
+            // Zadanie zostało pomyślnie zaktualizowane, więc należy załadować listę zadań ponownie
+            await OpenTasksModal(selectedProject);
+            CloseUpdateTaskModal();
+            Message = "Task updated successfully.";
+            IsErrorMessage = false;
+        }
+        else
+        {
+            // Obsługa błędu
+            IsErrorMessage = true;
+            Message = "Error occurred while updating the task.";
+        }
+        _ = HideMessageAfterDelay();
+        StateHasChanged();
+    }
+
+    private async Task DeleteTask(ProjectTaskDto taskToDelete)
+    {
+        if (taskToDelete is null)
+        {
+            throw new InvalidOperationException("Task to delete cannot be null.");
+        }
+
+        var response = await Http.DeleteAsync(
+            Navigation.BaseUri + $"tasks/deleteTask/{userId}/projects/{taskToDelete.ProjectID}/task/{taskToDelete.ProjectTaskId}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            // Zadanie zostało pomyślnie usunięte, więc należy załadować listę zadań ponownie
+            await OpenTasksModal(selectedProject);
+            Message = "Task deleted successfully.";
+            IsErrorMessage = false;
+        }
+        else
+        {
+            // Obsługa błędu
+            IsErrorMessage = true;
+            Message = "Error occurred while deleting the task.";
+        }
+        _ = HideMessageAfterDelay();
+        StateHasChanged();
+    }
+
+
+    // CRUD EXPENSE
+
+    private async Task LoadExpenses(string budgetId)
+    {
+        var expenseResponse = await Http.GetAsync(Navigation.BaseUri + $"expenses/getExpenses/{userId}/budgets/{budgetId}/allExpenses");
+        if (expenseResponse.IsSuccessStatusCode)
+        {
+            var expenseJsonString = await expenseResponse.Content.ReadAsStringAsync();
+            selectedBudget.Expenses = JsonSerializer.Deserialize<List<ExpenseDto>>(expenseJsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true, IgnoreNullValues = true });
+            // W przypadku sukcesu, lista wydatków zostaje zaktualizowana
+        }
+        else
+        {
+            selectedBudget.Expenses = new List<ExpenseDto>(); // Inicjalizacja pustej listy, gdy żądanie nie powiedzie się
+                                                              // Możesz również tutaj ustawić odpowiedni komunikat o błędzie
+            IsErrorMessage = true;
+            Message = "Error occurred while loading expenses.";
+            _ = HideMessageAfterDelay();
+        }
+    }
+
+
+    private async Task CreateExpense(ExpenseDto expense)
+    {
+        if (expense == null || selectedBudget == null)
+        {
+            IsErrorMessage = true;
+            Message = "Expense data or selected budget is null.";
+            _ = HideMessageAfterDelay();
+            return;
+        }
+
+        expense.ExpenseId = Guid.NewGuid().ToString();
+        expense.FK_BudgetId = selectedBudget.BudgetId;
+
+        var response = await Http.PostAsJsonAsync(
+            Navigation.BaseUri + $"expenses/addExpense/{userId}/budgets/{selectedBudget.BudgetId}",
+            expense);
+
+        if (response.IsSuccessStatusCode)
+        {
+            IsErrorMessage = false;
+            Message = "Expense added successfully.";
+            await LoadExpenses(selectedBudget.BudgetId); // Ponowne załadowanie wydatków
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = "Failed to add expense.";
+        }
+
+        _ = HideMessageAfterDelay();
+        StateHasChanged();
+    }
+
+    private async Task UpdateExpense(ExpenseDto expense)
+    {
+        if (expense == null)
+        {
+            IsErrorMessage = true;
+            Message = "Cannot update null expense.";
+            _ = HideMessageAfterDelay();
+            return;
+        }
+
+        var response = await Http.PutAsJsonAsync(
+            Navigation.BaseUri + $"expenses/updateExpense/{userId}/budgets/{expense.FK_BudgetId}/expense/{expense.ExpenseId}",
+            expense);
+
+        if (response.IsSuccessStatusCode)
+        {
+            // Zaktualizuj lokalną listę wydatków
+            var index = selectedBudget.Expenses.FindIndex(e => e.ExpenseId == expense.ExpenseId);
+            if (index != -1)
+            {
+                selectedBudget.Expenses[index] = expense;
+            }
+            CloseUpdateExpenseModal();
+            Message = "Expense updated successfully.";
+            IsErrorMessage = false;
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = "Failed to update expense.";
+        }
+
+        _ = HideMessageAfterDelay();
+        StateHasChanged();
+    }
+
+
+    private async Task DeleteExpense(ExpenseDto expense)
+    {
+        if (expense == null)
+        {
+            IsErrorMessage = true;
+            Message = "Cannot delete null expense.";
+            _ = HideMessageAfterDelay();
+            return;
+        }
+
+        var response = await Http.DeleteAsync(
+            Navigation.BaseUri + $"expenses/deleteExpense/{userId}/budgets/{expense.FK_BudgetId}/expense/{expense.ExpenseId}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            // Usuń wydatek z lokalnej listy, aby odświeżyć UI
+            selectedBudget.Expenses.Remove(expense);
+            Message = "Expense deleted successfully.";
+            IsErrorMessage = false;
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = "Failed to delete expense.";
+        }
+
+        _ = HideMessageAfterDelay();
+        StateHasChanged();
+    }
+
+
+    //Models
+
+    private void OpenUpdateModel(ProjectDto project)
+    {
+        selectedProject = project;
+        showUpdateModal = true;
+    }
+
+    private void CloseUpdateModel()
+    {
+        showUpdateModal = false;
+    }
+
+    private void CloseBudgetModal()
+    {
+        showBudgetModal = false;
+    }
+
+    private void CloseTasksModal()
+    {
+        showTasksModal = false;
+    }
+    private void OpenUpdateTaskModal(ProjectTaskDto task)
+    {
+        selectedTaskForUpdate = task;
+        showUpdateTaskModal = true;
+    }
+
+    private void CloseUpdateTaskModal()
+    {
+        showUpdateTaskModal = false;
+    }
+
+    private void OpenAddExpenseModal()
+    {
+        newExpense = new ExpenseDto(); // Resetuj formularz
+        showAddExpenseModal = true;
+    }
+
+    // Metoda do zamykania modala dodawania wydatku
+    private void CloseAddExpenseModal()
+    {
+        showAddExpenseModal = false;
+    }
+
+    private void OpenUpdateExpenseModal(ExpenseDto expense)
+    {
+        selectedExpenseForUpdate = expense;
+        showUpdateExpenseModal = true;
+    }
+
+    private void CloseUpdateExpenseModal()
+    {
+        showUpdateExpenseModal = false;
+    }   
+
+    //HELPERS
+    private async Task HideMessageAfterDelay()
+    {
+        await Task.Delay(2000); // Czekaj 2 sekundy
+        Message = string.Empty;
+        StateHasChanged(); // Odśwież komponent
+    }
+
+}

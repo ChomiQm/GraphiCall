@@ -1,0 +1,157 @@
+﻿@page "/Account/Manage/UpdateData"
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+@using GraphiCall.Data
+@using Microsoft.EntityFrameworkCore
+
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IdentityUserAccessor UserAccessor
+@inject IdentityRedirectManager RedirectManager
+@inject ApplicationDbContext _context
+<PageTitle>Update User Data</PageTitle>
+
+<h3>Update Your Data</h3>
+
+@if (!string.IsNullOrWhiteSpace(alertType))
+{
+    <div class="alert @alertType">@updateResult</div>
+}
+@if (Input != null)
+{
+    <EditForm Model="Input" OnValidSubmit="OnValidSubmitAsync" FormName="updateUserDataForm" method="post">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger" />
+        <div class="form-group">
+            <label for="UserFirstName">First Name</label>
+            <InputText id="UserFirstName" class="form-control" @bind-Value="Input.UserFirstName" />
+            <ValidationMessage For="@(() => Input.UserFirstName)" class="text-danger" />
+        </div>
+
+        <div class="form-group">
+            <label for="UserSurname">Surname</label>
+            <InputText id="UserSurname" class="form-control" @bind-Value="Input.UserSurname" />
+            <ValidationMessage For="@(() => Input.UserSurname)" class="text-danger" />
+        </div>
+
+        <div class="form-group">
+            <label for="UserCountry">Country</label>
+            <InputText id="UserCountry" class="form-control" @bind-Value="Input.UserCountry" />
+            <ValidationMessage For="@(() => Input.UserCountry)" class="text-danger" />
+        </div>
+
+        <div class="form-group">
+            <label for="UserTown">Town</label>
+            <InputText id="UserTown" class="form-control" @bind-Value="Input.UserTown" />
+            <ValidationMessage For="@(() => Input.UserTown)" class="text-danger" />
+        </div>
+
+        <div class="form-group">
+            <label for="UserStreet">Street</label>
+            <InputText id="UserStreet" class="form-control" @bind-Value="Input.UserStreet" />
+            <ValidationMessage For="@(() => Input.UserStreet)" class="text-danger" />
+        </div>
+
+        <div class="form-group">
+            <label for="UserHomeNumber">Home number</label>
+            <InputText id="UserHomeNumber" class="form-control" @bind-Value="Input.UserHomeNumberString" disabled="@(!string.IsNullOrEmpty(Input.UserFlatNumber))" />
+            <ValidationMessage For="@(() => Input.UserHomeNumberString)" class="text-danger" />
+        </div>
+
+        <div class="form-group">
+            <label for="UserFlatNumber">Flat number</label>
+            <InputText id="UserFlatNumber" class="form-control" @bind-Value="Input.UserFlatNumber" disabled="@(!string.IsNullOrEmpty(Input.UserHomeNumberString))" />
+            <ValidationMessage For="@(() => Input.UserFlatNumber)" class="text-danger" />
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Update</button>
+    </EditForm>
+}
+else
+{
+    <p>Can't access the component'.</p>
+}
+
+
+@code {
+    [SupplyParameterFromForm]
+    private DataUser Input { get; set; } = new DataUser();
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    private string? updateResult;
+    private string? alertType;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        if (user == null)
+        {
+            RedirectManager.RedirectTo("/");
+            throw new InvalidOperationException("User is not found.");
+        }
+        var userData = await _context.Users
+                        .Include(u => u.DataUsers) // Używając Include do załadowania powiązanych danych
+                        .FirstOrDefaultAsync(u => u.Id == user.Id);
+
+        if (userData == null)
+        {
+            RedirectManager.RedirectTo("/");
+            throw new InvalidOperationException("User data not found.");
+        }
+
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        // check for that user provided home or flat
+        if (!string.IsNullOrEmpty(Input.UserHomeNumberString) && !string.IsNullOrEmpty(Input.UserFlatNumber))
+        {
+            alertType = "alert-danger";
+            updateResult = "You can only have either a home number or a flat number, not both.";
+            return;
+        }
+
+        // inject actual user
+        var currentUser = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        if (currentUser == null)
+        {
+            alertType = "alert-danger";
+            updateResult = "User not found.";
+            return;
+        }
+
+        // search for existing data user
+        var userToUpdate = await _context.DataUsers
+                                .FirstOrDefaultAsync(u => u.UserId == currentUser.Id);
+
+        if (userToUpdate != null)
+        {
+            userToUpdate.UserFirstName = !string.IsNullOrEmpty(Input.UserFirstName) ? Input.UserFirstName : userToUpdate.UserFirstName;
+            userToUpdate.UserSurname = !string.IsNullOrEmpty(Input.UserSurname) ? Input.UserSurname : userToUpdate.UserSurname;
+            userToUpdate.UserCountry = !string.IsNullOrEmpty(Input.UserCountry) ? Input.UserCountry : userToUpdate.UserCountry;
+            userToUpdate.UserTown = !string.IsNullOrEmpty(Input.UserTown) ? Input.UserTown : userToUpdate.UserTown;
+            userToUpdate.UserStreet = !string.IsNullOrEmpty(Input.UserStreet) ? Input.UserStreet : userToUpdate.UserStreet;
+
+            // empty values handling for home && flat number
+            userToUpdate.UserHomeNumber = !string.IsNullOrEmpty(Input.UserHomeNumberString) ? int.Parse(Input.UserHomeNumberString) : userToUpdate.UserHomeNumber;
+            userToUpdate.UserFlatNumber = !string.IsNullOrEmpty(Input.UserFlatNumber) ? Input.UserFlatNumber : userToUpdate.UserFlatNumber;
+
+            // Save context to db
+            _context.Update(userToUpdate);
+            await _context.SaveChangesAsync();
+
+            alertType = "alert-success";
+            updateResult = "Data updated successfully.";
+        }
+        else
+        {
+            alertType = "alert-danger";
+            updateResult = "Error updating data. User data not found.";
+        }
+    }
+
+}

@@ -1,0 +1,842 @@
+﻿@page "/calendar"
+
+@using Microsoft.AspNetCore.Authorization
+@using GraphiCall.Client.DTO
+@using GraphiCall.Client
+@using System.Security.Claims
+@using System.Globalization
+@using System.Text.Json
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JSRuntime
+@attribute [Authorize]
+@rendermode InteractiveAuto
+
+<PageTitle>Calendar</PageTitle>
+
+@if (!string.IsNullOrEmpty(Message))
+{
+    var alertClass = IsErrorMessage ? "alert-danger" : "alert-success";
+    <div class=@($"alert {alertClass}")>@Message</div>
+}
+
+<AuthorizeView>
+    <style type="text/css">
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #divModel {
+            z-index: 10;
+            position: absolute;
+            border-radius: 3px;
+            background-color: #ffffff;
+            left: 54%; /* Centrowanie w poziomie */
+            top: 50%; /* Centrowanie w pionie */
+            transform: translate(-50%, -50%); /* Przesunięcie o połowę własnej szerokości i wysokości */
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            max-height: 600px;
+            text-align: center;
+            align-content: center;
+        }
+
+        .modelHeading {
+            text-align: center;
+            font-size: 24px;
+            text-decoration: underline;
+            margin-bottom: 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .panel-body {
+            flex: 1; /* Zajmuje 1/2 szerokości #divModel */
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .form-section, .events-section {
+            padding: 10px;
+            max-height: 600px;
+            overflow-x: hidden;
+            box-sizing: border-box; /* Zapewnia, że padding i border są wliczane do szerokości */
+        }
+
+        .events-section {
+            overflow-y: auto;
+        }
+
+        select {
+            border: 2px solid transparent;
+            border-radius: 10px;
+            background-color: lightcyan;
+            min-width: 120px;
+            text-align: center;
+            font-size: 20px;
+        }
+
+        .eventItem {
+            margin-bottom: 10px;
+            padding: 5px;
+            border: 1px solid #000;
+            border-radius: 5px;
+        }
+
+        input[type="text"], input[type="date"], select {
+            padding: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 5px 10px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-success {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .edit-model {
+            /* Styl dla okna edycji */
+            position: absolute;
+            right: 10%;
+            top: 10%;
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            z-index: 20;
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Black with 50% opacity */
+            z-index: 500; /* Ensure it is under the modal window */
+        }
+
+
+        .calendarModel {
+            /* Styl dla okna modalnego */
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 1); /* Ensure the modal content is not transparent */
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            z-index: 10;
+        }
+
+        .color-square {
+            width: 10px;
+            height: 10px;
+            display: inline-block;
+            margin-right: 1px;
+            margin-left: 5px;
+            border: 1px solid #000;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 10px;
+            min-height: 500px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .uklad {
+            margin: 0 auto;
+            padding-top: 10px;
+            background-color: #bfedff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .przyciski {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+    </style>
+
+    <h2>Hello @context.User.Identity?.Name!</h2>
+
+    <div>
+        @if (!calendarExists)
+        {
+            <button @onclick="CreateCalendarParams">Create a New Calendar</button>
+        }
+        else if (calendar != null)
+        {
+            <div class="uklad">
+                <h3>Your Calendar: @calendar.Name</h3>
+                <h4>Description: @calendar.Description</h4>
+
+                <select @onchange="@LoadCalendar">
+                    @foreach (string monthName in monthNames)
+                    {
+                        <option value="@monthName">
+                            @monthName
+                        </option>
+                    }
+                </select>
+
+                @if (displayModel)
+                {
+                    <div id="divModel">
+                        <div class="panel panel-default">
+                            <div class="modelHeading">Set event</div>
+                            <div class="form-section">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>From Date: </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="date" @bind="fromDate" style="width:100%;" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>To Date: </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="date" @bind="toDate" style="width:100%;" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>Title: </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" @bind="title" style="width:100%;" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>Description: </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <input type="text" @bind="description" style="width:100%;" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>Color: </label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <select @bind="selectedColor" style="width:100%;">
+                                            <option value="green">Green</option>
+                                            <option value="yellow">Yellow</option>
+                                            <option value="red">Red</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-bottom: 10px;">
+                                    <div class="col-md-6">
+                                    </div>
+                                    <div class="col-md-6" style="text-align:right;">
+                                        <button class="btn-success" style="float:left; margin-right:5px;" @onclick="AddEvent" disabled="@isEditEventModelVisible">Save</button>
+                                        <button class="btn btn-danger" @onclick="CloseModel" style="float:left;" disabled="@isEditEventModelVisible">Exit</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="events-section">
+                            <h3>Dodane Wydarzenia:</h3>
+                            @foreach (var calendarevent in addedEvents)
+                            {
+                                <div class="eventItem">
+                                    <p>Start date: @calendarevent.FromDate.ToShortDateString() End date: @calendarevent.ToDate.ToShortDateString()</p>
+                                    <p>Title: @calendarevent.Title</p>
+                                    <p>Description: @calendarevent.Description</p>
+                                    <p>Importance: @calendarevent.Color</p>
+                                    <button class="btn btn-warning" @onclick="() => ShowEditModel(calendarevent)" disabled="@isEditEventModelVisible">Update</button>
+                                    <button class="btn btn-danger" @onclick="() => DeleteEvent(calendarevent)" disabled="@isEditEventModelVisible">Delete</button>
+                                </div>
+                            }
+                        </div>
+                        @if (isEditEventModelVisible)
+                        {
+                            <div class="edit-model">
+                                <h3>Edit Event</h3>
+                                <input type="text" @bind="selectedEventForEdit.Title" />
+                                <input type="date" @bind="selectedEventForEdit.FromDate" />
+                                <input type="date" @bind="selectedEventForEdit.ToDate" />
+                                <input type="text" @bind="selectedEventForEdit.Description" />
+                                <select @bind="selectedEventForEdit.Color">
+                                    <option value="green">Green</option>
+                                    <option value="yellow">Yellow</option>
+                                    <option value="red">Red</option>
+                                </select>
+                                <button class="btn btn-warning" @onclick="SubmitEdit">Submit</button>
+                                <button class="btn btn-danger" @onclick="CloseEditModel">Cancel</button>
+                            </div>
+                        }
+                    </div>
+                }
+
+
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            @foreach (string day in days)
+                            {
+                                <th>@day</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int weekIndex = 0; weekIndex < (calendarDays.Count + 6) / 7; weekIndex++)
+                        {
+                            <tr>
+                                @for (int dayIndex = 0; dayIndex < 7; dayIndex++)
+                                {
+                                    int currentIndex = weekIndex * 7 + dayIndex;
+                                    if (currentIndex < calendarDays.Count)
+                                    {
+                                        var currentDay = calendarDays[currentIndex];
+                                        var sortedEvents = currentDay.Events.OrderBy(e => ColorPriority(e.Color)).ToList();
+
+                                        <td @ondblclick="isEditEventModelVisible ? (Action)(() => {}) : () => OpenModel(weekIndex, dayIndex)">
+                                            @currentDay.Date.ToString("dd-MMM-yyyy")
+                                            @for (int eventIndex = 0; eventIndex < sortedEvents.Count && eventIndex < maxEventsToShow; eventIndex++)
+                                            {
+                                                var events = sortedEvents[eventIndex];
+                                                <span class="color-square" style="background-color: @events.Color;"></span>
+                                            }
+                                            @if (sortedEvents.Count > maxEventsToShow)
+                                            {
+                                                <span>+ więcej</span>
+                                            }
+                                        </td>
+                                    }
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="przyciski">
+                <button class="btn btn-warning" @onclick="ShowEditCalendarModel" disabled="@isDisplayModelVisible">Update Calendar</button>
+                <button class="btn btn-danger" @onclick="DeleteCalendar" disabled="@isDisplayModelVisible">Delete Calendar</button>
+            </div>
+            @if (isEditCalendarModelVisible)
+            {
+                <div class="calendarModel">
+                    <h3>Update Calendar</h3>
+                    <input type="text" @bind="calendar.Name" />
+                    <input type="text" @bind="calendar.Description" />
+                    <button @onclick="UpdateCalendar">Submit</button>
+                    <button @onclick="CloseEditCalendarModel">Cancel</button>
+                </div>
+            }
+        }
+    </div>
+
+</AuthorizeView>
+
+@code {
+    //ON BUILDING SETUP -----------------------------------------------------------------------------
+
+    private string userId = null!;
+    private string? calendarId;
+    private bool calendarExists = false;
+
+    //DISPLAY MODEL
+    bool displayModel = false;
+    bool isDisplayModelVisible = false;
+
+    //CALENDAR
+    private CalendarDto? calendar;
+    List<string> monthNames = new List<string>();
+    List<CalendarDay> calendarDays = new List<CalendarDay>();
+    List<string> days = new List<string>();
+    DateTime startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+    DateTime endDate = (new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1)).AddMonths(1).AddDays(-1);
+
+    //INPUT VARIABLES
+    private DateTime fromDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+    private DateTime toDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+    private string title = "insertTitle";
+    private string description = "insertDescription";
+    private string selectedColor = "green"; // Domyślny kolor
+
+    //EVENT LIST
+    private List<CalendarEventDto> addedEvents = new List<CalendarEventDto>();
+
+    //ALLERT
+    private string Message = string.Empty;
+    private bool IsErrorMessage = false;
+
+    //UPDATE
+    private bool isEditEventModelVisible = false;
+    private CalendarEventDto selectedEventForEdit = new CalendarEventDto();
+    private bool isEditCalendarModelVisible = false;
+
+    //SECURITY
+    private int maxEventsToShow = 10;
+    private int ColorPriority(string color)
+    {
+        return color switch
+        {
+            "red" => 1,
+            "yellow" => 2,
+            "green" => 3,
+            _ => 4 // Domyślny priorytet dla innych kolorów
+        };
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        monthNames = new CultureInfo("en-GB").DateTimeFormat.MonthGenitiveNames
+            .Where(m => !string.IsNullOrEmpty(m))
+            .ToList();
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
+
+        calendarId = await GetCalendarId(); // Pobierz ID kalendarza tutaj
+        if (calendarId != null)
+        {
+            calendarExists = true;
+
+            if (calendarExists)
+            {
+                await CheckIfParamsExists();
+                await GetAllEventsAsync();
+                GenerateCalendarHead();
+                GenerateCalendarBody();
+                StateHasChanged();
+            }
+            else
+            {
+                IsErrorMessage = true;
+                Message = "Can't render calendar.";
+                _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+                Console.WriteLine("Failed to retrieve calendar: ");
+                throw new ArgumentException("Something went wrong");
+            }
+        }
+    }
+
+    // CALENDAR GENERATION SCHEMA -----------------------------------------------------------------------------
+    private void GenerateCalendarHead()
+    {
+        var day1 = new List<string>();
+        for (var dt = startDate; dt <= endDate; dt = dt.AddDays(1))
+        {
+            day1.Add(dt.ToString("dddd"));
+        }
+        days = day1.Distinct().ToList();
+    }
+
+    private void GenerateCalendarBody()
+    {
+        calendarDays.Clear(); // Czyszczenie listy dni przed generowaniem nowych
+        var currentDay = startDate;
+
+        while (currentDay <= endDate)
+        {
+            var dayEvents = addedEvents.Where(e => e.FromDate.Date <= currentDay && e.ToDate.Date >= currentDay).ToList();
+            calendarDays.Add(new CalendarDay { Date = currentDay, Events = dayEvents });
+            currentDay = currentDay.AddDays(1);
+            StateHasChanged();
+        }
+    }
+
+    private void LoadCalendar(ChangeEventArgs e)
+    {
+        var month = e.Value.ToString();
+
+        if (!string.IsNullOrEmpty(month))
+        {
+
+            int monthIndex = DateTime.ParseExact(month, "MMMM", System.Globalization.CultureInfo.CreateSpecificCulture("en-GB")).Month;
+            startDate = new DateTime(DateTime.Now.Year, monthIndex, 1);
+            endDate = (new DateTime(DateTime.Now.Year, monthIndex, 1)).AddMonths(1).AddDays(-1);
+
+            GenerateCalendarHead();
+            GenerateCalendarBody();
+            StateHasChanged();
+        }
+        else
+        {
+            throw new ArgumentNullException("month is null");
+        }
+
+    }
+
+    //CALENDAR CRUD SETUP -----------------------------------------------------------------------------
+
+    private async Task CreateCalendarParams()
+    {
+        var newCalendar = new CalendarDto
+            {
+                CalendarId = Guid.NewGuid().ToString(),
+                Name = "My Calendar",
+                Description = "My Personal Calendar",
+                Events = null,
+                ApplicationUserId = userId
+            };
+
+        var response = await Http.PostAsJsonAsync(Navigation.BaseUri + $"calendars/addCalendar/{userId}", newCalendar);
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            if (!string.IsNullOrEmpty(content))
+            {
+                calendar = JsonSerializer.Deserialize<CalendarDto>(content);
+                calendarExists = true;
+                IsErrorMessage = false;
+                Message = "Calendar created.";
+                _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+                await GetCalendarParams();
+                StateHasChanged();
+                await JSRuntime.InvokeVoidAsync("location.reload");
+            }
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = "Failed to add params, look console for more details.";
+            _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+            Console.WriteLine("Failed to retrieve params: " + response.StatusCode);
+            return;
+        }
+    }
+
+    private async Task UpdateCalendar()
+    {
+        if (calendar == null)
+        {
+            return;
+        }
+
+        var response = await Http.PutAsJsonAsync(Navigation.BaseUri + $"calendars/{userId}/updateCalendar/{calendar.CalendarId}", calendar);
+
+        if (response.IsSuccessStatusCode)
+        {
+            IsErrorMessage = false;
+            Message = "Calendar updated successfully.";
+            _ = HideMessageAfterDelay();
+            StateHasChanged();
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = "Failed to update calendar.";
+            _ = HideMessageAfterDelay();
+        }
+    }
+
+    private async Task DeleteCalendar()
+    {
+        if (calendarId == null)
+        {
+            return;
+        }
+
+        var response = await Http.DeleteAsync(Navigation.BaseUri + $"calendars/{userId}/deleteCalendar/{calendarId}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            calendarExists = false;
+            IsErrorMessage = false;
+            Message = "Calendar deleted successfully.";
+            _ = HideMessageAfterDelay();
+            StateHasChanged();
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = "Failed to delete calendar.";
+            _ = HideMessageAfterDelay();
+        }
+    }
+
+    //EVENT CRUD SETUP -----------------------------------------------------------------------------
+
+    private async Task<IEnumerable<CalendarEventDto>> GetAllEventsAsync()
+    {
+        var response = await Http.GetAsync(Navigation.BaseUri + $"calendars/getCalendar/{userId}/getEvents/{calendarId}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var events = await response.Content.ReadFromJsonAsync<IEnumerable<CalendarEventDto>>();
+            addedEvents.Clear();
+            addedEvents.AddRange(events);
+            return events;
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = $"Failed to get events, look console for more details.";
+            _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+            Console.WriteLine("Failed to retrieve events: " + response.StatusCode);
+            return Enumerable.Empty<CalendarEventDto>();
+        }
+    }
+
+    // POST
+    private async Task AddEvent()
+    {
+        string dayName = fromDate.ToString("dddd", new CultureInfo("en-GB"));
+        string dateFormat = "dd-MM-yyyy";
+
+        var eventToAdd = new CalendarEventDto
+            {
+                CalendarEventId = Guid.NewGuid().ToString(),
+                FK_CalendarId = calendarId,
+                EventDate = toDate.Date,
+                FromDate = fromDate.Date,
+                ToDate = toDate.Date,
+                Title = title,
+                Description = description,
+                Color = selectedColor,
+                DateValue = fromDate.Date.ToString(dateFormat),
+                DayName = dayName
+            };
+
+        var response = await Http.PostAsJsonAsync(Navigation.BaseUri + $"calendars/{userId}/addEventToCalendar/{calendarId}", eventToAdd);
+
+        if (response.IsSuccessStatusCode)
+        {
+            try
+            {
+                var contentStream = await response.Content.ReadAsStreamAsync();
+                var addedEvent = await JsonSerializer.DeserializeAsync<CalendarEventDto>(contentStream);
+                if (addedEvent != null)
+                {
+                    addedEvents.Add(addedEvent);
+                    await GetAllEventsAsync();
+                    await GetCalendarParams();
+                    IsErrorMessage = false;
+                    Message = "Event successfully added!";
+                    _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+                    CloseModel();
+                    StateHasChanged(); // Aktualizuje UI po zmianach danych
+                }
+                else
+                {
+                    Console.WriteLine("Deserialization returned null object.");
+                }
+            }
+            catch (JsonException jsonEx)
+            {
+                IsErrorMessage = true;
+                Message = $"Failed to add event, look console for more details.";
+                _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+                Console.WriteLine("JSON deserialization error: " + jsonEx.Message);
+            }
+        }
+        else
+        {
+            // Logowanie treści błędu HTTP
+            var errorContent = await response.Content.ReadAsStringAsync();
+            IsErrorMessage = true;
+            Message = $"Failed to add event, look console for more details.";
+            _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+            Console.WriteLine("HTTP error response: " + errorContent);
+            throw new Exception($"Failed to add event: {errorContent}");
+        }
+    }
+
+    private async Task SubmitEdit()
+    {
+        var response = await Http.PutAsJsonAsync(Navigation.BaseUri + $"calendars/{userId}/updateEventInCalendar/{calendarId}/events/{selectedEventForEdit.CalendarEventId}", selectedEventForEdit);
+
+        if (response.IsSuccessStatusCode)
+        {
+            IsErrorMessage = false;
+            Message = $"Event updated.";
+            _ = HideMessageAfterDelay();
+            await GetAllEventsAsync();
+            GenerateCalendarHead();    // Ponownie generuje nagłówek kalendarza
+            GenerateCalendarBody();
+            CloseEditModel();
+            CloseModel();
+            StateHasChanged(); // Aktualizuje UI
+        }
+        else
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            IsErrorMessage = true;
+            Message = $"Failed to update event, check console for more details.";
+            _ = HideMessageAfterDelay();
+            Console.WriteLine("HTTP error response: " + errorContent);
+            throw new Exception($"Failed to update event: {errorContent}");
+        }
+    }
+
+    private async Task DeleteEvent(CalendarEventDto eventToDelete)
+    {
+        var response = await Http.DeleteAsync(Navigation.BaseUri + $"calendars/{userId}/deleteEventFromCalendar/{calendarId}/events/{eventToDelete.CalendarEventId}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            addedEvents.Remove(eventToDelete);
+            IsErrorMessage = false;
+            Message = $"Event removed.";
+            _ = HideMessageAfterDelay();
+            await GetAllEventsAsync();
+            GenerateCalendarHead();    // Ponownie generuje nagłówek kalendarza
+            GenerateCalendarBody();
+            CloseModel();
+            StateHasChanged();
+        }
+        else
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            IsErrorMessage = true;
+            Message = $"Failed to delete event, check console for more details.";
+            _ = HideMessageAfterDelay();
+            Console.WriteLine("HTTP error response: " + errorContent);
+            throw new Exception($"Failed to add event: {errorContent}");
+        }
+    }
+
+    // FORM PICKER -----------------------------------------------------------------------------
+    private void OpenModel(int wIndex, int dIndex)
+    {
+        displayModel = true;
+        isDisplayModelVisible = true;
+        CloseEditCalendarModel();
+    }
+
+    private void CloseModel()
+    {
+        displayModel = false;
+        isDisplayModelVisible = false;
+        isEditEventModelVisible = false;
+    }
+
+    private void ShowEditModel(CalendarEventDto eventToEdit)
+    {
+        selectedEventForEdit = eventToEdit;
+        isEditEventModelVisible = true;
+        CloseEditCalendarModel();
+    }
+
+    private void CloseEditModel()
+    {
+        isEditEventModelVisible = false;
+    }
+
+    private void ShowEditCalendarModel()
+    {
+        isEditCalendarModelVisible = true;
+        CloseModel();
+        CloseEditModel();
+    }
+
+    private void CloseEditCalendarModel()
+    {
+        isEditCalendarModelVisible = false;
+    }
+
+    //HELPERS -----------------------------------------------------------------------------
+
+    private async Task<string> GetCalendarId()
+    {
+        var response = await Http.GetAsync(Navigation.BaseUri + $"calendars/getCalendarId/{userId}");
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadAsStringAsync();
+        }
+        else if (calendar == null)
+        {
+            return null;
+        }
+        else
+        {
+            throw new ArgumentNullException("Something went wrong while recieving Calendar ID");
+        }
+    }
+
+    private async Task CheckIfParamsExists()
+    {
+        var response = await Http.GetAsync(Navigation.BaseUri + $"calendars/checkCalendar/{userId}");
+        if (response.IsSuccessStatusCode)
+        {
+            calendarExists = await response.Content.ReadFromJsonAsync<bool>();
+            if (calendarExists)
+            {
+                await GetCalendarParams();
+            }
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = "Failed to check params, look console for more details.";
+            _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+            Console.WriteLine("Failed to retrieve params: " + response.StatusCode);
+            return;
+        }
+    }
+
+    private async Task GetCalendarParams()
+    {
+        var response = await Http.GetAsync(Navigation.BaseUri + $"calendars/getCalendar/{userId}/with-events");
+        if (response.IsSuccessStatusCode)
+        {
+            calendar = await response.Content.ReadFromJsonAsync<CalendarDto>();
+
+            GenerateCalendarHead();
+            GenerateCalendarBody();
+        }
+    }
+
+    public class CalendarDay
+    {
+        public DateTime Date { get; set; }
+        public List<CalendarEventDto> Events { get; set; } = new List<CalendarEventDto>();
+    }
+
+    private async Task HideMessageAfterDelay()
+    {
+        await Task.Delay(2000); // Czekaj 2 sekundy
+        Message = string.Empty;
+        StateHasChanged(); // Odśwież komponent
+    }
+
+}

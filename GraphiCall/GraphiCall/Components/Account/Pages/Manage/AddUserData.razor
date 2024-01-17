@@ -1,0 +1,139 @@
+﻿@page "/Account/Manage/AddUserData"
+
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+@using GraphiCall.Data
+
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IdentityUserAccessor UserAccessor
+@inject IdentityRedirectManager RedirectManager
+
+<PageTitle>Add User Data</PageTitle>
+
+<h3>Add Your Data</h3>
+
+@if (!string.IsNullOrWhiteSpace(alertType))
+{
+    <div class="alert @alertType">@postResult</div>
+}
+
+
+@if (Input != null)
+{
+    <EditForm Model="Input" OnValidSubmit="OnValidSubmitAsync" FormName="addUserDataForm" method="post">
+        <DataAnnotationsValidator />
+        <ValidationSummary class="text-danger" />
+
+        <div class="form-group">
+            <label for="UserFirstName">First Name</label>
+            <InputText id="UserFirstName" class="form-control" @bind-Value="Input.UserFirstName" />
+            <ValidationMessage For="@(() => Input.UserFirstName)" class="text-danger" />
+        </div>
+
+        <div class="form-group">
+            <label for="UserSurname">Surname</label>
+            <InputText id="UserSurname" class="form-control" @bind-Value="Input.UserSurname" />
+            <ValidationMessage For="@(() => Input.UserSurname)" class="text-danger" />
+        </div>
+
+        <div class="form-group">
+            <label for="UserCountry">Country</label>
+            <InputText id="UserCountry" class="form-control" @bind-Value="Input.UserCountry" />
+            <ValidationMessage For="@(() => Input.UserCountry)" class="text-danger" />
+        </div>
+
+        <div class="form-group">
+            <label for="UserTown">Town</label>
+            <InputText id="UserTown" class="form-control" @bind-Value="Input.UserTown" />
+            <ValidationMessage For="@(() => Input.UserTown)" class="text-danger" />
+        </div>
+
+        <div class="form-group">
+            <label for="UserStreet">Street</label>
+            <InputText id="UserStreet" class="form-control" @bind-Value="Input.UserStreet" />
+            <ValidationMessage For="@(() => Input.UserStreet)" class="text-danger" />
+        </div>
+
+        <div class="form-group">
+            <label for="UserHomeNumber">Home number</label>
+            <InputText id="UserHomeNumber" class="form-control" @bind-Value="Input.UserHomeNumberString" disabled="@(!string.IsNullOrEmpty(Input.UserFlatNumber))" />
+            <ValidationMessage For="@(() => Input.UserHomeNumberString)" class="text-danger" />
+        </div>
+
+        <div class="form-group">
+            <label for="UserFlatNumber">Flat number</label>
+            <InputText id="UserFlatNumber" class="form-control" @bind-Value="Input.UserFlatNumber" disabled="@(!string.IsNullOrEmpty(Input.UserHomeNumberString))" />
+            <ValidationMessage For="@(() => Input.UserFlatNumber)" class="text-danger" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </EditForm>
+}
+else
+{
+    <p>Can't access the component</p>
+}
+@code {
+    [SupplyParameterFromForm]
+    private DataUser Input { get; set; } = new DataUser();
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    private string? postResult;
+    private string? alertType;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+        if (user == null)
+        {
+            RedirectManager.RedirectTo("/");
+            throw new InvalidOperationException("User is not found.");
+        }
+        if (Input == null)
+        {
+            Input = new DataUser
+                {
+                    UserId = user.Id,
+                    UserDataId = Guid.NewGuid().ToString()
+                };
+        }
+        else
+        {
+            Input.UserId = user.Id;
+            Input.UserDataId = Guid.NewGuid().ToString();
+        }
+
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        if (!string.IsNullOrEmpty(Input.UserHomeNumberString) && !string.IsNullOrEmpty(Input.UserFlatNumber))
+        {
+            alertType = "alert-danger";
+            postResult = "You can only have either a home number or a flat number, not both.";
+            return;
+        }
+
+        Console.WriteLine($"Sending data: {System.Text.Json.JsonSerializer.Serialize(Input)}");
+        var response = await Http.PostAsJsonAsync(Navigation.BaseUri + "manage/addData", Input);
+
+        if (response.IsSuccessStatusCode)
+        {
+            alertType = "alert-success";
+            postResult = "Data added successfully.";
+            RedirectManager.RedirectTo("/Account/Manage");
+        }
+        else
+        {
+            alertType = "alert-danger";
+            postResult = "Error adding data. Please try again.";
+        }
+    }
+
+
+
+}

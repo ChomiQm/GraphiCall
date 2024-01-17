@@ -1,0 +1,77 @@
+﻿@page "/auth"
+
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+@rendermode InteractiveAuto
+
+<PageTitle>Auth</PageTitle>
+
+<style>
+    .authentication-container {
+        max-width: fit-content;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    h1, h2, h3 {
+        color: #333;
+    }
+
+    .navigation-container {
+        max-width: fit-content;
+        border: 2px solid transparent;
+        border-radius: 16px;
+        background-color: #bfedff;
+        display: block;
+        margin-top: 20px;
+        padding: 10px 10px 10px 10px;
+        font-size: 24px;
+    }
+
+    .nav-link {
+        display: inline-block;
+        text-decoration: none;
+        color: #000;
+        border: 2px solid transparent;
+        background-color: lightcyan;
+        border-radius: 14px;
+        margin: 5px 0 0 0;
+        min-width: 200px;
+    }
+
+        .nav-link:hover {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+            border-color: #0056b3;
+            outline: none;
+        }
+</style>
+
+<div class="authentication-container">
+    <h1>You are authenticated</h1>
+
+    <AuthorizeView>
+        <h2>Hello @context.User.Identity?.Name!</h2>
+
+        <div class="navigation-container">
+            <h2>Which of these do you want to use? <br></h2>
+            <div>
+                <NavLink class="nav-link" href="/whiteboard">Whiteboard</NavLink>
+            </div>
+            <div>
+                <NavLink class="nav-link" href="/note">Notes</NavLink>
+            </div>
+            <div>
+                <NavLink class="nav-link" href="/calendar">Calendar</NavLink>
+            </div>
+            <div>
+                <NavLink class="nav-link" href="/project">Project</NavLink>
+            </div>
+            <div>
+                <NavLink class="nav-link" href="/chat">Chat</NavLink>
+            </div>
+        </div>
+    </AuthorizeView>
+</div>

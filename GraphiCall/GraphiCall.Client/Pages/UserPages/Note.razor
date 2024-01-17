@@ -1,0 +1,448 @@
+﻿@page "/note"
+
+@using Microsoft.AspNetCore.Authorization
+@using System.Reflection
+@using System.Security.Claims
+@using GraphiCall.Client.DTO
+@using System.Text.Json
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@attribute [Authorize]
+@rendermode InteractiveAuto
+
+<PageTitle>Notes</PageTitle>
+
+<h1>You are authenticated</h1>
+
+@if (!string.IsNullOrEmpty(Message))
+{
+    var alertClass = IsErrorMessage ? "alert-danger" : "alert-success";
+    <div class=@($"alert {alertClass}")>@Message</div>
+}
+<AuthorizeView>
+    <style type="text/css">
+        /* Styl ogólny dla kontenera notatek */
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background-color: #bfedff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        /* Stylizacja karty notatki */
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+            }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        /* Stylizacja przycisków  */
+        .btn {
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+            .btn-success:hover {
+                background-color: #1e7e34;
+            }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: black;
+        }
+
+            .btn-warning:hover {
+                background-color: #d39e00;
+            }
+
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+            .btn-danger:hover {
+                background-color: #bd2130;
+            }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            display: block;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .btn-add-note {
+            display: inline-block; /* lub 'block' jeśli ma być na całej szerokości */
+            width: auto; /* lub konkretna szerokość, np. '150px' */
+            margin-top: 15px;
+        }
+
+        /* Stylizacja przycisków w modalnym oknie */
+        .modal-footer .btn {
+            margin: 5px;
+        }
+
+        /* Stylizacja modalnego okna */
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.5); /* Ustaw przezroczystość na 50% */
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 500; /* Pod modalnym oknem */
+        }
+
+        .modal-header, .modal-footer {
+            border-bottom: 1px solid #eee;
+            border-top: 1px solid #eee;
+        }
+
+        .modal-title {
+            color: #333;
+        }
+
+        .close {
+            color: #333;
+            opacity: 1;
+        }
+
+        /* forms */
+
+        .form-group label {
+            font-weight: bold;
+        }
+
+        .form-control {
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+        }
+
+        .kontener-przycisk {
+            justify-content: center;
+            display: block;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+    </style>
+    <h2>Hello @context.User.Identity?.Name!</h2>
+    <div class="container mt-4">
+        <h1>Your Notes</h1>
+        <div class="row">
+            <div class="col">
+                @if (notes != null && notes.Any())
+                {
+                    <div class="row row-cols-1 row-cols-md-3 g-4">
+                        @foreach (var note in notes)
+                        {
+                            <div class="col">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@note.Title</h5>
+                                        <p class="card-text">@note.Content</p>
+                                    </div>
+                                    <div class="card-footer">
+                                        <small class="text-muted">
+                                            Last updated @(note.UpdatedAt.HasValue ? note.UpdatedAt.Value.ToString("g") : "never")
+                                            <br>
+                                            Priority: @note.Priority
+                                        </small>
+                                        <button class="btn btn-warning btn-sm" @onclick="@(() => OpenNoteEditModel(note))">Edit</button>
+                                        <button class="btn btn-danger btn-sm" @onclick="@(() => DeleteNote(note))">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p>No notes found.</p>
+                }
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-4 text-center">
+                <button class="btn btn-primary btn-add-note" @onclick="OpenNoteModel">Add Note</button>
+            </div>
+        </div>
+    </div>
+
+
+    @if (showNoteModel)
+    {
+        <div class="modal" tabindex="-1" style="display:block" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">New Note</h5>
+                        <button type="button" class="close" @onclick="CloseNoteModel"> </button>
+
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="noteTitle">Title</label>
+                            <input type="text" class="form-control" id="noteTitle" @bind="newNote.Title">
+                        </div>
+                        <div class="form-group">
+                            <label for="noteContent">Content</label>
+                            <textarea class="form-control" id="noteContent" rows="3" @bind="newNote.Content"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="notePriority">Priority</label>
+                            <select class="form-control" id="notePriority" @bind="newNote.Priority">
+                                @foreach (var priority in Enum.GetValues(typeof(NotePriority)))
+                                {
+                                    <option value="@priority">@priority</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" @onclick="CreateNote">Save changes</button>
+                        <button type="button" class="btn btn-danger" @onclick="CloseNoteModel">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-backdrop fade show"></div>
+    }
+    @if (showNoteEditModel)
+    {
+        <div class="modal" tabindex="-1" style="display:block" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Edit Note</h5>
+                        <button type="button" class="close" @onclick="CloseEditNoteModel" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="noteTitle">Title</label>
+                            <input type="text" class="form-control" id="noteTitle" @bind="selectedNote.Title">
+                        </div>
+                        <div class="form-group">
+                            <label for="noteContent">Content</label>
+                            <textarea class="form-control" id="noteContent" rows="3" @bind="selectedNote.Content"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="notePriority">Priority</label>
+                            <select class="form-control" id="notePriority" @bind="selectedNote.Priority">
+                                @foreach (var priority in Enum.GetValues(typeof(NotePriority)))
+                                {
+                                    <option value="@priority">@priority</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" @onclick="UpdateNote">Save changes</button>
+                        <button type="button" class="btn btn-danger" @onclick="CloseEditNoteModel">Exit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-backdrop fade show"></div>
+    }
+
+
+</AuthorizeView>
+
+@code {
+    //ON BUILDING SETUP -----------------------------------------------------------------------------
+    private string userId = null!;
+    private bool noteEditModel = false;
+
+    private NoteDto newNote = new NoteDto();
+
+    //MODEL
+    private bool showNoteModel = false;
+    private bool showNoteEditModel = false;
+    //NOTE LIST
+    private List<NoteDto> notes = new();
+
+    //ALLERT
+    private string Message = string.Empty;
+    private bool IsErrorMessage = false;
+
+    //UPDATE
+    private NoteDto? selectedNote;
+
+    //INIT
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            await LoadNotes();
+        }
+    }
+
+    private async Task LoadNotes()
+    {
+        try
+        {
+            var response = await Http.GetAsync(Navigation.BaseUri + $"notes/{userId}/getAllNotes");
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonString = await response.Content.ReadAsStringAsync();
+                notes = JsonSerializer.Deserialize<List<NoteDto>>(jsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true, IgnoreNullValues = true }) ?? new List<NoteDto>();
+            }
+            else
+            {
+                IsErrorMessage = true;
+                Message = "Failed to load notes.";
+                _ = HideMessageAfterDelay();
+            }
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            IsErrorMessage = true;
+            Message = $"An exception occured: {ex.Message}";
+            _ = HideMessageAfterDelay();
+            StateHasChanged();
+        }
+    }
+
+    private async Task CreateNote()
+    {
+        var response = await Http.PostAsJsonAsync(Navigation.BaseUri + $"notes/{userId}/createNote", newNote);
+        if (response.IsSuccessStatusCode)
+        {
+            IsErrorMessage = false;
+            Message = $"Note created.";
+            CloseNoteModel();
+            await LoadNotes(); // Reload the notes to include the new one
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = $"error while creating note.";
+        }
+        _ = HideMessageAfterDelay();
+        StateHasChanged();
+    }
+
+    private async Task UpdateNote()
+    {
+        selectedNote.UpdatedAt = DateTime.Now; // Aktualizuj czas aktualizacji
+        selectedNote.ApplicationUserId = userId;
+        var response = await Http.PutAsJsonAsync(Navigation.BaseUri + $"notes/{userId}/updateNote/{selectedNote.NoteId}", selectedNote);
+        if (response.IsSuccessStatusCode)
+        {
+            CloseEditNoteModel();
+            await LoadNotes(); // Reload notes to reflect the changes
+            Message = "Note updated successfully.";
+            IsErrorMessage = false;
+        }
+        else
+        {
+            Message = "Error occurred while updating the note.";
+            IsErrorMessage = true;
+        }
+        _ = HideMessageAfterDelay();
+        StateHasChanged();
+    }
+
+    private async Task DeleteNote(NoteDto note)
+    {
+        var response = await Http.DeleteAsync(Navigation.BaseUri + $"notes/{userId}/deleteNote/{note.NoteId}");
+        if (response.IsSuccessStatusCode)
+        {
+            notes.Remove(note);
+            Message = "Note deleted successfully.";
+            IsErrorMessage = false;
+            await LoadNotes();
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = "Error occurred while deleting the note.";
+        }
+        _ = HideMessageAfterDelay();
+        StateHasChanged();
+    }
+
+    // MODEL
+    private void CloseNoteModel()
+    {
+        showNoteModel = false;
+    }
+
+    private void OpenNoteModel()
+    {
+        newNote = new NoteDto
+            {
+                ApplicationUserId = userId,
+                NoteId = Guid.NewGuid().ToString() // Generowanie nowego GUID
+            };
+        showNoteModel = true;
+    }
+
+    private void OpenNoteEditModel(NoteDto note)
+    {
+        selectedNote = note;
+        showNoteEditModel = true;
+    }
+
+    private void CloseEditNoteModel()
+    {
+        showNoteEditModel = false;
+        selectedNote = null; // Clear the selected note
+    }
+
+    //HELPERS
+    private async Task HideMessageAfterDelay()
+    {
+        await Task.Delay(2000); // Czekaj 2 sekundy
+        Message = string.Empty;
+        StateHasChanged(); // Odśwież komponent
+    }
+
+}

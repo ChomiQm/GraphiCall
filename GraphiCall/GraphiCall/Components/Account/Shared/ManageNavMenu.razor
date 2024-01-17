@@ -1,0 +1,84 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Identity
+@using GraphiCall.Data
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.EntityFrameworkCore
+
+@inject IServiceProvider ServiceProvider
+@inject SignInManager<ApplicationUser> SignInManager
+@inject NavigationManager Navigation
+@inject HttpClient Http
+@inject IdentityRedirectManager RedirectManager
+
+@attribute [Authorize]
+
+<div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+    <ul class="navbar-nav flex-grow-1">
+        <li class="nav-item">
+            <NavLink class="nav-link" href="/Account/Manage" Match="NavLinkMatch.All">Profile</NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link" href="/Account/Manage/Email">Email</NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link" href="/Account/Manage/ChangePassword">Change Password</NavLink>
+        </li>
+        @if (_hasExternalLogins)
+        {
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/Account/Manage/ExternalLogins">External Logins</NavLink>
+            </li>
+        }
+        <li class="nav-item">
+            <NavLink class="nav-link" href="/Account/Manage/TwoFactorAuthentication">Two-factor Authentication</NavLink>
+        </li>
+        <li class="nav-item">
+            <NavLink class="nav-link" href="/Account/Manage/PersonalData">Personal Data</NavLink>
+        </li>
+        @if (!_hasUserData)
+        {
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/Account/Manage/AddUserData">Add your data</NavLink>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/Account/Manage/UpdateData">Update your data</NavLink>
+            </li>
+        }
+    </ul>
+</div>
+
+@code {
+    public ApplicationUser? User { get; set; }
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    private bool _hasExternalLogins;
+    private bool _hasUserData;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using (var scope = ServiceProvider.CreateScope())
+        {
+            var userAccessor = scope.ServiceProvider.GetRequiredService<IdentityUserAccessor>();
+            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            User = await userAccessor.GetRequiredUserAsync(HttpContext);
+
+            if (User != null)
+            {
+                var userData = await dbContext.DataUsers
+                               .FirstOrDefaultAsync(du => du.UserId == User.Id);
+
+
+                User.DataUsers = userData;
+            }
+        }
+
+        _hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+        _hasUserData = User?.DataUsers != null;
+    }
+}

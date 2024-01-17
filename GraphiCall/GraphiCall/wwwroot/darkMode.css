@@ -1,0 +1,16 @@
+﻿:root {
+    --primary-color: #fff; /* Kolor dla trybu jasnego */
+    --background-color: #fff;
+    --text-color: #000;
+}
+
+.dark-mode {
+    --primary-color: #121212; /* Kolor dla trybu ciemnego */
+    --background-color: #121212;
+    --text-color: #fff;
+}
+
+body, article {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}

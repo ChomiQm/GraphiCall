@@ -1,0 +1,144 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{F486B256-A11A-489B-9B27-1188B96B47B2}|GraphiCall\\GraphiCall.Client\\GraphiCall.Client.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall.client\\pages\\auth.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F486B256-A11A-489B-9B27-1188B96B47B2}|GraphiCall\\GraphiCall.Client\\GraphiCall.Client.csproj|solutionrelative:graphicall\\graphicall.client\\pages\\auth.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\wwwroot\\darkmode.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|solutionrelative:graphicall\\graphicall\\wwwroot\\darkmode.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|solutionrelative:graphicall\\graphicall\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\components\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|solutionrelative:graphicall\\graphicall\\components\\app.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\wwwroot\\js\\toggledark.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}",
+      "RelativeMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|solutionrelative:graphicall\\graphicall\\wwwroot\\js\\toggledark.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|solutionrelative:graphicall\\graphicall\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 233,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{a80febb4-e7e0-4147-b476-21aaf2453969}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{e8b06f52-6d01-11d2-aa7d-00c04f990343}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Auth.razor",
+              "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall.Client\\Pages\\Auth.razor",
+              "RelativeDocumentMoniker": "GraphiCall\\GraphiCall.Client\\Pages\\Auth.razor",
+              "ToolTip": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall.Client\\Pages\\Auth.razor",
+              "RelativeToolTip": "GraphiCall\\GraphiCall.Client\\Pages\\Auth.razor",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA8AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2023-12-09T09:03:24.389Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 253,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0ad07096-bba9-4900-a651-0598d26f6d24}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "darkMode.css",
+              "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\wwwroot\\darkMode.css",
+              "RelativeDocumentMoniker": "GraphiCall\\GraphiCall\\wwwroot\\darkMode.css",
+              "ToolTip": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\wwwroot\\darkMode.css",
+              "RelativeToolTip": "GraphiCall\\GraphiCall\\wwwroot\\darkMode.css",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAABAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2024-01-17T11:01:25.035Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MainLayout.razor",
+              "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\Components\\Layout\\MainLayout.razor",
+              "RelativeDocumentMoniker": "GraphiCall\\GraphiCall\\Components\\Layout\\MainLayout.razor",
+              "ToolTip": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\Components\\Layout\\MainLayout.razor",
+              "RelativeToolTip": "GraphiCall\\GraphiCall\\Components\\Layout\\MainLayout.razor",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA0AAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-01-17T10:22:39.806Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "App.razor",
+              "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\Components\\App.razor",
+              "RelativeDocumentMoniker": "GraphiCall\\GraphiCall\\Components\\App.razor",
+              "ToolTip": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\Components\\App.razor",
+              "RelativeToolTip": "GraphiCall\\GraphiCall\\Components\\App.razor",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAApAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-01-17T10:22:25.097Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "toggleDark.js",
+              "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\wwwroot\\js\\toggleDark.js",
+              "RelativeDocumentMoniker": "GraphiCall\\GraphiCall\\wwwroot\\js\\toggleDark.js",
+              "ToolTip": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\wwwroot\\js\\toggleDark.js",
+              "RelativeToolTip": "GraphiCall\\GraphiCall\\wwwroot\\js\\toggleDark.js",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAuwAwAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
+              "WhenOpened": "2024-01-17T10:22:12.049Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\Program.cs",
+              "RelativeDocumentMoniker": "GraphiCall\\GraphiCall\\Program.cs",
+              "ToolTip": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\Program.cs",
+              "RelativeToolTip": "GraphiCall\\GraphiCall\\Program.cs",
+              "ViewState": "AQIAAEwAAAAAAAAAAAAAwFcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2023-12-09T09:04:37.294Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

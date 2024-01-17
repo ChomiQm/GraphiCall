@@ -1,0 +1,364 @@
+﻿@page "/whiteboard"
+
+@using Microsoft.AspNetCore.Authorization
+@using System.Reflection
+@using System.Security.Claims
+@using GraphiCall.Client.DTO
+@using System.Text.Json
+@attribute [Authorize]
+@inject IJSRuntime JSRuntime
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@rendermode InteractiveAuto
+<PageTitle>Whiteboard</PageTitle>
+
+<style>
+
+    #whiteboard {
+        width: 100%;
+        height: 100%; /* Może być potrzebne zastosowanie innego podejścia dla wysokości */
+        border: 1px solid black;
+    }
+
+    .button-container {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 10px;
+    }
+
+    .whiteboard-button {
+        border: 2px solid #007bff;
+        border-radius: 10px;
+        background-color: #cce5ff;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+        .whiteboard-button:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+</style>
+
+<AuthorizeView>
+
+    @if (!string.IsNullOrEmpty(Message))
+    {
+        var alertClass = IsErrorMessage ? "alert-danger" : "alert-success";
+        <div class=@($"alert {alertClass}")>@Message</div>
+    }
+
+    <canvas id="whiteboard"></canvas>
+
+
+
+    <div class="button-container">
+        <input type="file" id="load" />
+        <button id="save" class="whiteboard-button">Save file</button>
+        <button id="clear" class="whiteboard-button">Clear</button>
+        <button id="undo" class="whiteboard-button">Undo</button>
+        <button id="redo" class="whiteboard-button">Redo</button>
+        <button id="saveJSON" class="whiteboard-button">Save as JSON</button>
+        <button @onclick="SaveCurrentWhiteboard" class="whiteboard-button">Zapisz Whiteboard</button>
+        <button id="onLoad" @onclick="LoadWhiteboard" class="whiteboard-button">Wczytaj Whiteboard</button>
+    </div>
+
+</AuthorizeView>
+
+
+@code {
+    //CORE PROPERTIES
+    private static TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
+    private bool scriptLoaded = false;
+    private string userId = null!;
+    private string? whiteboardId;
+
+    //ERROR HANDLING
+    private string Message = string.Empty;
+    private bool IsErrorMessage = false;
+
+    // RENDER
+
+    private async Task LoadScriptAsync(string url)
+    {
+        await JSRuntime.InvokeVoidAsync("eval", $@"
+        var script = document.createElement('script');
+        script.src = '{url}';
+        script.onload = () => {{ DotNet.invokeMethodAsync('{Assembly.GetExecutingAssembly().GetName().Name}', 'NotifyScriptLoaded'); }};
+        document.head.appendChild(script);");
+        await tcs.Task;
+        scriptLoaded = true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadScriptAsync("js/whiteboard.js");
+            await JSRuntime.InvokeVoidAsync("initializeWhiteboard", userId);
+        }
+    }
+
+    //INIT
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        }
+
+        var whiteboardExists = await CheckIfWhiteboardExists();
+        if (!whiteboardExists)
+        {
+            await CreateNewWhiteboard();
+            await GetWhiteboardId();
+            StateHasChanged();
+        }
+        else
+        {
+            await GetWhiteboardId();
+        }
+
+    }
+
+    [JSInvokable]
+    public static void NotifyScriptLoaded()
+    {
+        if (!tcs.Task.IsCompleted)
+        {
+            tcs.SetResult(null);
+        }
+    }
+
+    public void Dispose()
+    {
+        if (scriptLoaded)
+        {
+            JSRuntime.InvokeVoidAsync("destroyWhiteboard");
+        }
+    }
+
+    // OnSetup METHODS
+
+    private async Task CreateNewWhiteboard()
+    {
+        var newWhiteboard = new WhiteboardDto
+            {
+                WhiteboardId = Guid.NewGuid().ToString(),
+                Data = "",
+                ApplicationUserId = userId
+            };
+
+        var response = await Http.PostAsJsonAsync(Navigation.BaseUri + $"whiteboards/{userId}/addWhiteboard", newWhiteboard);
+        if (response.IsSuccessStatusCode)
+        {
+            StateHasChanged();
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.NotModified)
+        {
+            // Przerwij, ponieważ whiteboard już istnieje
+            Console.WriteLine("Whiteboard already exists for this user.");
+            return;
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = "Failed to create a whiteboard, look console for more details.";
+            _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+            Console.WriteLine("Failed to create whiteboard: " + response.StatusCode);
+            return;
+        }
+    }
+
+    private async Task<WhiteboardDto> GetWhiteboardAsync()
+    {
+        try
+        {
+            var response = await Http.GetAsync(Navigation.BaseUri + $"whiteboards/{userId}/getWhiteboard");
+            if (response.IsSuccessStatusCode)
+            {
+                try
+                {
+                    var whiteboardJson = await response.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true,
+                            IgnoreNullValues = true
+                        };
+                    var whiteboardDto = JsonSerializer.Deserialize<WhiteboardDto>(whiteboardJson, options);
+
+                    return whiteboardDto;
+                }
+                catch (JsonException ex)
+                {
+                    Console.WriteLine("JSON Error: " + ex.Message);
+                    return null;
+                }
+
+            }
+            else
+            {
+                IsErrorMessage = true;
+                Message = "Failed to get whiteboard look console for more details.";
+                _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+                Console.WriteLine("Failed to retrieve whiteboard: " + response.StatusCode);
+            }
+        }
+        catch (Exception ex)
+        {
+            IsErrorMessage = true;
+            Message = $"GetWhiteboardAsync failed.";
+            _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+            Console.WriteLine("An error occured: " + ex.Message);
+        }
+
+        return null;
+    }
+
+    private async Task LoadWhiteboard()
+    {
+        var whiteboardDto = await GetWhiteboardAsync();
+        if (whiteboardDto != null && !string.IsNullOrEmpty(whiteboardDto.Data))
+        {
+            await JSRuntime.InvokeVoidAsync("loadWhiteboardData", whiteboardDto.Data);
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = "Failed to retrieve whiteboard object, look console for more details.";
+            _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+            Console.WriteLine($"Failed to retrieve whiteboard object: {whiteboardDto}");
+            return;
+        }
+    }
+
+    // HELPERS
+
+    private async Task GetWhiteboardId()
+    {
+        try
+        {
+            var response = await Http.GetAsync(Navigation.BaseUri + $"whiteboards/{userId}/getWhiteboardId");
+            if (response.IsSuccessStatusCode)
+            {
+                whiteboardId = await response.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                IsErrorMessage = true;
+                Message = "Failed to get id, look console for more details.";
+                _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+                Console.WriteLine("Failed to retrieve id: " + response.StatusCode);
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            IsErrorMessage = true;
+            Message = $"GetWhiteboardId failed.";
+            _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+            Console.WriteLine("An error occured: " + ex.Message);
+            return;
+        }
+    }
+
+    private async Task SaveCurrentWhiteboard()
+    {
+        try
+        {
+            var json = await JSRuntime.InvokeAsync<string>("getWhiteboardData");
+
+            var whiteboardUpdatedModel = new WhiteboardDto
+                {
+                    WhiteboardId = whiteboardId,
+                    Data = json,
+                    ApplicationUserId = userId
+                };
+
+            await UpdateWhiteboardAsync(whiteboardUpdatedModel);
+        }
+        catch (Exception ex)
+        {
+            IsErrorMessage = true;
+            Message = $"SaveCurrentWhiteboard failed.";
+            _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+            Console.WriteLine("An error occured: " + ex.Message);
+        }
+    }
+
+    private async Task<bool> CheckIfWhiteboardExists()
+    {
+        try
+        {
+            var response = await Http.GetAsync(Navigation.BaseUri + $"whiteboards/{userId}/checkWhiteboardExists");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<bool>();
+            }
+            else
+            {
+                IsErrorMessage = true;
+                Message = "Failed to get id, look console for more details.";
+                _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+                Console.WriteLine("Failed to retrieve id: " + response.StatusCode);
+                return false;
+            }
+        }
+        catch (Exception ex)
+        {
+            IsErrorMessage = true;
+            Message = $"CheckIfWhiteboardExists failed.";
+            _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+            Console.WriteLine("An error occured: " + ex.Message);
+            return false;
+        }
+    }
+
+    private async Task UpdateWhiteboardAsync(WhiteboardDto whiteboard)
+    {
+
+        try
+        {
+            Console.WriteLine(userId);
+            Console.WriteLine(whiteboardId);
+            Console.WriteLine(whiteboard);
+            var response = await Http.PutAsJsonAsync(Navigation.BaseUri + $"whiteboards/{userId}/updateWhiteboard/{whiteboardId}", whiteboard);
+            if (!response.IsSuccessStatusCode)
+            {
+                IsErrorMessage = true;
+                Message = "Failed to update whiteboard, look console for more details.";
+                _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+                Console.WriteLine("Failed to retrieve id: " + response.StatusCode);
+                return;
+            }
+            else
+            {
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            IsErrorMessage = true;
+            Message = $"UpdateWhiteboardAsync failed.";
+            _ = HideMessageAfterDelay(); // Wywołanie asynchroniczne bez blokowania
+            Console.WriteLine("An error occured: " + ex.Message);
+            return;
+        }
+    }
+
+
+    private async Task HideMessageAfterDelay()
+    {
+        await Task.Delay(2000); // Czekaj 2 sekundy
+        Message = string.Empty;
+        StateHasChanged(); // Odśwież komponent
+    }
+}
