@@ -7,23 +7,23 @@
       "RelativeMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|solutionrelative:graphicall\\graphicall\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\graphicall\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|solutionrelative:graphicall\\graphicall\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F486B256-A11A-489B-9B27-1188B96B47B2}|GraphiCall\\GraphiCall.Client\\GraphiCall.Client.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\graphicall.client\\dto\\projectdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F486B256-A11A-489B-9B27-1188B96B47B2}|GraphiCall\\GraphiCall.Client\\GraphiCall.Client.csproj|solutionrelative:graphicall\\graphicall.client\\dto\\projectdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F486B256-A11A-489B-9B27-1188B96B47B2}|GraphiCall\\GraphiCall.Client\\GraphiCall.Client.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\graphicall.client\\pages\\userpages\\whiteboard.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F486B256-A11A-489B-9B27-1188B96B47B2}|GraphiCall\\GraphiCall.Client\\GraphiCall.Client.csproj|solutionrelative:graphicall\\graphicall.client\\pages\\userpages\\whiteboard.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\mateu\\AppData\\Local\\Temp\\.vsdbgsrc\\1825482c844efbb2f18c5956d4baed21b17dc39fa7d3bb1c76884242ed2253e9\\HttpConnection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F486B256-A11A-489B-9B27-1188B96B47B2}|GraphiCall\\GraphiCall.Client\\GraphiCall.Client.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\graphicall.client\\pages\\auth.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{F486B256-A11A-489B-9B27-1188B96B47B2}|GraphiCall\\GraphiCall.Client\\GraphiCall.Client.csproj|solutionrelative:graphicall\\graphicall.client\\pages\\auth.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\mateu\\AppData\\Local\\Temp\\.vsdbgsrc\\1825482c844efbb2f18c5956d4baed21b17dc39fa7d3bb1c76884242ed2253e9\\HttpConnection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F486B256-A11A-489B-9B27-1188B96B47B2}|GraphiCall\\GraphiCall.Client\\GraphiCall.Client.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\graphicall.client\\pages\\userpages\\whiteboard.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F486B256-A11A-489B-9B27-1188B96B47B2}|GraphiCall\\GraphiCall.Client\\GraphiCall.Client.csproj|solutionrelative:graphicall\\graphicall.client\\pages\\userpages\\whiteboard.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\graphicall\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|solutionrelative:graphicall\\graphicall\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F486B256-A11A-489B-9B27-1188B96B47B2}|GraphiCall\\GraphiCall.Client\\GraphiCall.Client.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\graphicall.client\\dto\\projectdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F486B256-A11A-489B-9B27-1188B96B47B2}|GraphiCall\\GraphiCall.Client\\GraphiCall.Client.csproj|solutionrelative:graphicall\\graphicall.client\\dto\\projectdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F486B256-A11A-489B-9B27-1188B96B47B2}|GraphiCall\\GraphiCall.Client\\GraphiCall.Client.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\graphicall.client\\dockerfile||{8B382828-6202-11D1-8870-0000F87579D2}",
@@ -36,10 +36,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{A4BE20E5-A69A-418B-A7E8-44D1E04C2426}|Elementy rozwi\u0105zania{A4BE20E5-A69A-418B-A7E8-44D1E04C2426}|C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{A4BE20E5-A69A-418B-A7E8-44D1E04C2426}|Elementy rozwi\u0105zania{A4BE20E5-A69A-418B-A7E8-44D1E04C2426}|solutionrelative:docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\graphicall\\properties\\servicedependencies.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|solutionrelative:graphicall\\graphicall\\properties\\servicedependencies.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -48,7 +44,7 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 220,
+          "DockedWidth": 241,
           "SelectedChildIndex": 10,
           "Children": [
             {
@@ -64,8 +60,12 @@
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "Auth.razor",
               "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall.Client\\Pages\\Auth.razor",
               "RelativeDocumentMoniker": "GraphiCall\\GraphiCall.Client\\Pages\\Auth.razor",
@@ -73,20 +73,21 @@
               "RelativeToolTip": "GraphiCall\\GraphiCall.Client\\Pages\\Auth.razor",
               "ViewState": "AQIAAFEAAAAAAAAAAAAAAC0AAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-01-27T17:02:30.186Z"
+              "WhenOpened": "2024-01-27T17:02:30.186Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 1,
               "Title": "HttpConnection.cs",
               "DocumentMoniker": "C:\\Users\\mateu\\AppData\\Local\\Temp\\.vsdbgsrc\\1825482c844efbb2f18c5956d4baed21b17dc39fa7d3bb1c76884242ed2253e9\\HttpConnection.cs",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\1825482c844efbb2f18c5956d4baed21b17dc39fa7d3bb1c76884242ed2253e9\\HttpConnection.cs",
-              "ToolTip": "C:\\Users\\mateu\\AppData\\Local\\Temp\\.vsdbgsrc\\1825482c844efbb2f18c5956d4baed21b17dc39fa7d3bb1c76884242ed2253e9\\HttpConnection.cs[Tylko do odczytu]",
-              "RelativeToolTip": "..\\..\\..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\1825482c844efbb2f18c5956d4baed21b17dc39fa7d3bb1c76884242ed2253e9\\HttpConnection.cs[Tylko do odczytu]",
+              "ToolTip": "C:\\Users\\mateu\\AppData\\Local\\Temp\\.vsdbgsrc\\1825482c844efbb2f18c5956d4baed21b17dc39fa7d3bb1c76884242ed2253e9\\HttpConnection.cs",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\1825482c844efbb2f18c5956d4baed21b17dc39fa7d3bb1c76884242ed2253e9\\HttpConnection.cs",
               "ViewState": "AQIAAJcHAAAAAAAAAAAmwKQHAAAEAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-01-27T17:01:54.523Z",
-              "EditorCaption": "[Tylko do odczytu]"
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -126,7 +127,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\appsettings.json",
               "RelativeDocumentMoniker": "GraphiCall\\GraphiCall\\appsettings.json",
@@ -134,20 +135,7 @@
               "RelativeToolTip": "GraphiCall\\GraphiCall\\appsettings.json",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAEAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-01-27T14:15:09.479Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "serviceDependencies.json",
-              "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\Properties\\serviceDependencies.json",
-              "RelativeDocumentMoniker": "GraphiCall\\GraphiCall\\Properties\\serviceDependencies.json",
-              "ToolTip": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\Properties\\serviceDependencies.json",
-              "RelativeToolTip": "GraphiCall\\GraphiCall\\Properties\\serviceDependencies.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-01-27T13:55:34.065Z"
+              "WhenOpened": "2024-01-27T14:15:09.479Z"
             },
             {
               "$type": "Document",
@@ -157,7 +145,7 @@
               "RelativeDocumentMoniker": "GraphiCall\\GraphiCall\\Properties\\launchSettings.json",
               "ToolTip": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\Properties\\launchSettings.json",
               "RelativeToolTip": "GraphiCall\\GraphiCall\\Properties\\launchSettings.json",
-              "ViewState": "AQIAAAwAAAAAAAAAAADwvykAAAAAAAAA",
+              "ViewState": "AQIAABsAAAAAAAAAAAAAACoAAAAxAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2024-01-27T13:55:33.302Z",
               "EditorCaption": ""
@@ -165,8 +153,8 @@
           ]
         },
         {
-          "DockedWidth": 266,
-          "SelectedChildIndex": 1,
+          "DockedWidth": 245,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -174,13 +162,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "ProjectDto.cs",
               "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall.Client\\DTO\\ProjectDto.cs",
               "RelativeDocumentMoniker": "GraphiCall\\GraphiCall.Client\\DTO\\ProjectDto.cs",
               "ToolTip": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall.Client\\DTO\\ProjectDto.cs",
               "RelativeToolTip": "GraphiCall\\GraphiCall.Client\\DTO\\ProjectDto.cs",
-              "ViewState": "AQIAABIAAAAAAAAAAAAowBEAAABEAAAA",
+              "ViewState": "AQIAAAsAAAAAAAAAAAAAwBEAAABEAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-01-22T14:36:06.11Z",
               "EditorCaption": ""
@@ -195,7 +183,8 @@
               "RelativeToolTip": "GraphiCall\\GraphiCall.Client\\Pages\\UserPages\\Whiteboard.razor",
               "ViewState": "AQIAAEEBAAAAAAAAAADwv28AAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-01-22T14:16:17.999Z"
+              "WhenOpened": "2024-01-22T14:16:17.999Z",
+              "EditorCaption": ""
             }
           ]
         }

@@ -42,7 +42,7 @@
       "launchBrowser": true,
       "applicationUrl": "https://graphicall.azurewebsites.net", // Zastąp 'twojadomena.azurewebsites.net' rzeczywistym adresem URL Twojej aplikacji
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Production"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }

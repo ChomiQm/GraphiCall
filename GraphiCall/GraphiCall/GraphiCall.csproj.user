@@ -2,6 +2,6 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ActiveDebugProfile>https</ActiveDebugProfile>
-    <NameOfLastUsedPublishProfile>C:\Users\mateu\source\repos\GraphiCall\GraphiCall\GraphiCall\GraphiCall\GraphiCall\Properties\PublishProfiles\GraphiCall - Web Deploy.pubxml</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>C:\Users\mateu\source\repos\GraphiCall\GraphiCall\GraphiCall\GraphiCall\GraphiCall\Properties\PublishProfiles\FolderProfile.pubxml</NameOfLastUsedPublishProfile>
   </PropertyGroup>
 </Project>
