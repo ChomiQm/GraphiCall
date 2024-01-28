@@ -64,16 +64,29 @@ builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpS
 
 
 
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy("MyCorsPolicy", policy =>
+//    {
+//        policy.WithOrigins("https://localhost:7145")
+//            .AllowAnyHeader()
+//            .AllowAnyMethod()
+//            .AllowCredentials(); // W³¹cz, jeœli Twoje ¿¹dania musz¹ obs³ugiwaæ ciasteczka / nag³ówki uwierzytelniania
+//    });
+//});
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("MyCorsPolicy", policy =>
+    options.AddPolicy("Cors", policy =>
     {
-        policy.WithOrigins("https://localhost:7145")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials(); // W³¹cz, jeœli Twoje ¿¹dania musz¹ obs³ugiwaæ ciasteczka / nag³ówki uwierzytelniania
+        policy.AllowAnyMethod();
+        policy.AllowAnyOrigin();
+        policy.AllowAnyHeader();
+        policy.AllowCredentials();
     });
 });
+
+
 
 //builder.Services.AddSwaggerGen(c =>
 //{
