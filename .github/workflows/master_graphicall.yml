@@ -53,5 +53,5 @@ jobs:
         with:
           app-name: 'graphicall'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_89924382BFB34AEBAC6E860773571280 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_5AFDC89A1AFC43949581087A1168B321 }}
           package: .
