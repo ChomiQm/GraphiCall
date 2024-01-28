@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\graphicall\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|solutionrelative:graphicall\\graphicall\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\graphicall\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|solutionrelative:graphicall\\graphicall\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
@@ -34,10 +38,6 @@
       "RelativeMoniker": "D:0:0:{A4BE20E5-A69A-418B-A7E8-44D1E04C2426}|Elementy rozwi\u0105zania{A4BE20E5-A69A-418B-A7E8-44D1E04C2426}|solutionrelative:docker-compose.yml||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\graphicall\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|solutionrelative:graphicall\\graphicall\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|c:\\users\\mateu\\source\\repos\\graphicall\\graphicall\\graphicall\\graphicall\\graphicall\\properties\\servicedependencies.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{3D315C43-9E4E-4B12-9ADE-71402F53F4EA}|GraphiCall\\GraphiCall\\GraphiCall.csproj|solutionrelative:graphicall\\graphicall\\properties\\servicedependencies.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
@@ -49,7 +49,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 220,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Bookmark",
@@ -65,7 +65,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "Auth.razor",
               "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall.Client\\Pages\\Auth.razor",
               "RelativeDocumentMoniker": "GraphiCall\\GraphiCall.Client\\Pages\\Auth.razor",
@@ -77,7 +77,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "HttpConnection.cs",
               "DocumentMoniker": "C:\\Users\\mateu\\AppData\\Local\\Temp\\.vsdbgsrc\\1825482c844efbb2f18c5956d4baed21b17dc39fa7d3bb1c76884242ed2253e9\\HttpConnection.cs",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\AppData\\Local\\Temp\\.vsdbgsrc\\1825482c844efbb2f18c5956d4baed21b17dc39fa7d3bb1c76884242ed2253e9\\HttpConnection.cs",
@@ -90,7 +90,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "dockerfile",
               "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall.Client\\dockerfile",
               "RelativeDocumentMoniker": "GraphiCall\\GraphiCall.Client\\dockerfile",
@@ -102,7 +102,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "docker-compose.yml",
               "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\docker-compose.yml",
               "RelativeDocumentMoniker": "docker-compose.yml",
@@ -114,7 +114,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "dockerfile",
               "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\dockerfile",
               "RelativeDocumentMoniker": "GraphiCall\\GraphiCall\\dockerfile",
@@ -126,13 +126,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\appsettings.json",
               "RelativeDocumentMoniker": "GraphiCall\\GraphiCall\\appsettings.json",
               "ToolTip": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\appsettings.json",
               "RelativeToolTip": "GraphiCall\\GraphiCall\\appsettings.json",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAASAQAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAwAAAAEAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2024-01-27T14:15:09.479Z",
               "EditorCaption": ""
@@ -151,7 +151,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 0,
               "Title": "launchSettings.json",
               "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "GraphiCall\\GraphiCall\\Properties\\launchSettings.json",
@@ -159,7 +159,8 @@
               "RelativeToolTip": "GraphiCall\\GraphiCall\\Properties\\launchSettings.json",
               "ViewState": "AQIAAAwAAAAAAAAAAADwvykAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2024-01-27T13:55:33.302Z"
+              "WhenOpened": "2024-01-27T13:55:33.302Z",
+              "EditorCaption": ""
             }
           ]
         },
@@ -173,7 +174,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "ProjectDto.cs",
               "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall.Client\\DTO\\ProjectDto.cs",
               "RelativeDocumentMoniker": "GraphiCall\\GraphiCall.Client\\DTO\\ProjectDto.cs",
@@ -186,7 +187,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Whiteboard.razor",
               "DocumentMoniker": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall.Client\\Pages\\UserPages\\Whiteboard.razor",
               "RelativeDocumentMoniker": "GraphiCall\\GraphiCall.Client\\Pages\\UserPages\\Whiteboard.razor",
