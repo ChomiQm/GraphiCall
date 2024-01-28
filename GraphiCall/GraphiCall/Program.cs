@@ -68,7 +68,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyCorsPolicy", policy =>
     {
-        policy.WithOrigins("https://localhost:5126")
+        policy.WithOrigins("https://localhost:7145")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials(); // W³¹cz, jeœli Twoje ¿¹dania musz¹ obs³ugiwaæ ciasteczka / nag³ówki uwierzytelniania
