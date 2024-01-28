@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "UariGR7XgjxLfg6cOSc80amLQMCzqjQNybikCP6YODwsc/arPN77YK04HqAXh+frajgq0jF5CxnC2fSvR6fRcA==",
+  "dgSpecHash": "1FIbMOtWzcmshtiIM2Z4FHXIU4cpLp0xCBlqaqTumtCQpZBO7he56cGhk1LwZMn/bAfq8+/m41O/QjZxtdp2TQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall.Client\\GraphiCall.Client.csproj",
+  "projectFilePath": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall.Client\\GraphiCall.Client.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\mateu\\.nuget\\packages\\blazored.localstorage\\4.4.0\\blazored.localstorage.4.4.0.nupkg.sha512",
     "C:\\Users\\mateu\\.nuget\\packages\\microsoft.aspnetcore.authorization\\8.0.0\\microsoft.aspnetcore.authorization.8.0.0.nupkg.sha512",
     "C:\\Users\\mateu\\.nuget\\packages\\microsoft.aspnetcore.components\\8.0.0\\microsoft.aspnetcore.components.8.0.0.nupkg.sha512",
     "C:\\Users\\mateu\\.nuget\\packages\\microsoft.aspnetcore.components.analyzers\\8.0.0\\microsoft.aspnetcore.components.analyzers.8.0.0.nupkg.sha512",

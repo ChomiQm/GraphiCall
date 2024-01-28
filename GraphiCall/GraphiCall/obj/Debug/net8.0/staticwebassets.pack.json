@@ -1,32 +1,24 @@
 {
   "Files": [
     {
-      "Id": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\GraphiCall.bundle.scp.css",
+      "Id": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\GraphiCall.bundle.scp.css",
       "PackagePath": "staticwebassets\\GraphiCall.bundle.scp.css"
     },
     {
-      "Id": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\wwwroot\\app.css",
+      "Id": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\wwwroot\\app.css",
       "PackagePath": "staticwebassets\\app.css"
     },
     {
-      "Id": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "Id": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\wwwroot\\bootstrap\\bootstrap.min.css",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
     },
     {
-      "Id": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "Id": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\wwwroot\\bootstrap\\bootstrap.min.css.map",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
     },
     {
-      "Id": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\wwwroot\\darkMode.css",
-      "PackagePath": "staticwebassets\\darkMode.css"
-    },
-    {
-      "Id": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\wwwroot\\favicon.png",
+      "Id": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\wwwroot\\favicon.png",
       "PackagePath": "staticwebassets\\favicon.png"
-    },
-    {
-      "Id": "C:\\Users\\mateu\\source\\repos\\GraphiCall\\GraphiCall\\GraphiCall\\GraphiCall\\wwwroot\\js\\toggleDark.js",
-      "PackagePath": "staticwebassets\\js\\toggleDark.js"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.GraphiCall.Microsoft.AspNetCore.StaticWebAssets.props",

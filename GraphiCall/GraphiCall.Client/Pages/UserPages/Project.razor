@@ -25,36 +25,36 @@
       <div class="container mt-3">
         <form>
             <div class="form-group">
-                <label for="project-name">Project name </label>
-                <input type="text" class="form-control" id="project-name" @bind="@projectDto.Name">
+                <label for="project-name">@(isLang ? "Project name" : "Nazwa projektu") </label>
+                <input type="text" class="form-control" id="project-name" @bind="@projectDto.Name" maxlength="50">
             </div>
             <div class="form-group">
-                <label for="project-description">Project description</label>
-                <textarea class="form-control" id="project-description" rows="3" @bind="@projectDto.Description"></textarea>
+                <label for="project-description">@(isLang ? "Project description" : "Opis projektu")</label>
+                <textarea class="form-control" id="project-description" rows="3" @bind="@projectDto.Description" maxlength="500"></textarea>
             </div>
             <div class="form-group">
-                <label for="project-name">Client name </label>
-                <input type="text" class="form-control" id="project-name" @bind="@projectDto.ClientName">
+                <label for="project-name">@(isLang ? "Client name" : "Nazwa klienta") </label>
+                <input type="text" class="form-control" id="project-name" @bind="@projectDto.ClientName" maxlength="50">
             </div>
             <div class="form-group">
-                <label for="project-start-date">Start date of project</label>
+                <label for="project-start-date">@(isLang ? "Start date of project" : "Początkowa data projektu")</label>
                 <input type="date" class="form-control" id="project-start-date" @bind="@projectDto.StartDate">
             </div>
             <div class="form-group">
-                <label for="project-end-date">End date of project</label>
+                <label for="project-end-date">@(isLang ? "End date of project" : "Końcowa data projektu")</label>
                 <input type="date" class="form-control" id="project-end-date" @bind="@projectDto.EndDate">
             </div>
             <div class="form-group">
                 <h1>Create Budget</h1>
-                <label for="budget-total-income">Total amount of cash</label>
-                <input type="number" class="form-control" id="budget-total-income" @bind="@budgetDto.TotalIncome">
+                <label for="budget-total-income">@(isLang ? "Budget amount" : "Ilość budżetu")</label>
+                <input type="number" class="form-control" id="budget-total-income" min="0.00" @bind="@budgetDto.TotalIncome">
             </div>
             <div class="form-group">
-                <label for="budget-total-income">Budget period</label>
+                <label for="budget-total-income">@(isLang ? "Budget period" : "Czas trwania budżetu")</label>
                 <input type="date" class="form-control" id="budget-total-income" @bind="@budgetDto.BudgetPeriod">
             </div>
 
-            <button type="button" class="btn btn-primary" @onclick="AddProjectWithBudget">Utwórz projekt</button>
+            <button type="button" class="btn btn-primary" @onclick="AddProjectWithBudget">@(isLang ? "Create project" : "Utwórz projekt")</button>
         </form>
     </div>
 
@@ -68,10 +68,10 @@ else
                 <div class="card-body">
                     <h5 class="card-title">@project.Name</h5>
                     <p class="card-text">@project.Description</p>
-                    <button class="btn btn-primary" @onclick="() => OpenUpdateModel(project)">Aktualizuj</button>
-                    <button class="btn btn-info" @onclick="() => OpenBudgetModal(project)">Dane o Budżecie</button>
-                    <button class="btn btn-warning" @onclick="() => OpenTasksModal(project)">Zadania</button>
-                    <button class="btn btn-danger" @onclick="() => DeleteProject(project)">Usuń</button>
+                    <button class="btn btn-primary" @onclick="() => OpenUpdateModel(project)">@(isLang ? "Update" : "Aktualizuj")</button>
+                    <button class="btn btn-info" @onclick="() => OpenBudgetModal(project)">@(isLang ? "Budget data" : "Dane o Budżecie")</button>
+                    <button class="btn btn-warning" @onclick="() => OpenTasksModal(project)">@(isLang ? "Tasks" : "Zadania")</button>
+                    <button class="btn btn-danger" @onclick="() => DeleteProject(project)">@(isLang ? "Delete" : "Usuń")</button>
                 </div>
             </div>
         }
@@ -84,17 +84,17 @@ else
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Update project</h5>
+                    <h5 class="modal-title">@(isLang ? "Update project" : "Aktualizuj projekt")</h5>
                     <button type="button" class="close" @onclick="CloseUpdateModel"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="text" class="form-control mb-2" @bind="selectedProject.Name" placeholder="Nazwa projektu">
-                    <textarea class="form-control mb-2" @bind="selectedProject.Description" placeholder="Opis projektu"></textarea>
+                    <input type="text" class="form-control mb-2" @bind="selectedProject.Name" placeholder=@(isLang ? "Project name" : "Nazwa projektu") maxlength="50">
+                    <textarea class="form-control mb-2" @bind="selectedProject.Description" placeholder=@(isLang ? "Project description" : "Opis projektu") maxlength="500"></textarea>
                     @* Dodaj więcej pól do edycji według potrzeb *@
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" @onclick="() => UpdateProject(selectedProject)">Zapisz zmiany</button>
-                    <button type="button" class="btn btn-secondary" @onclick="CloseUpdateModel">Zamknij</button>
+                    <button type="button" class="btn btn-success" @onclick="() => UpdateProject(selectedProject)">@(isLang ? "Save changes" : "Zapisz zmiany")</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseUpdateModel">@(isLang ? "Close" : "Zamknij")</button>
                 </div>
             </div>
         </div>
@@ -109,7 +109,7 @@ else
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Project Tasks</h5>
+                    <h5 class="modal-title">@(isLang ? "Project Tasks" : "Zadania projektu")</h5>
                     <button type="button" class="close" @onclick="CloseTasksModal">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -117,15 +117,15 @@ else
                 <div class="modal-body">
                     <!-- Formularz dodawania nowego zadania -->
                     <div class="form-group">
-                        <label for="taskTitle">Title</label>
-                        <input type="text" class="form-control" id="taskTitle" @bind="@newTask.Title">
+                        <label for="taskTitle">@(isLang ? "Title" : "Tytuł")</label>
+                        <input type="text" class="form-control" id="taskTitle" @bind="@newTask.Title" maxlength="50">
                     </div>
                     <div class="form-group">
-                        <label for="taskDescription">Description</label>
-                        <textarea class="form-control" id="taskDescription" rows="3" @bind="@newTask.Description"></textarea>
+                        <label for="taskDescription">@(isLang ? "Description" : "Opis")</label>
+                        <textarea class="form-control" id="taskDescription" rows="3" @bind="@newTask.Description" maxlength="500"></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="taskDueDate">Due Date</label>
+                        <label for="taskDueDate">@(isLang ? "Due date" : "Data")</label>
                         <input type="date" class="form-control" id="taskDueDate" @bind="@newTask.DueDate">
                     </div>
                     <div class="form-group">
@@ -137,7 +137,7 @@ else
                             }
                         </select>
                     </div>
-                    <button class="btn btn-primary" @onclick="HandleCreateTask">Add Task</button>
+                    <button class="btn btn-primary" @onclick="HandleCreateTask">@(isLang ? "Add task" : "Dodaj zadanie")</button>
 
                     <hr />
 
@@ -148,20 +148,20 @@ else
                         {
                             <div class="p-2 border-bottom">
                                 <strong>@task.Title</strong> - @task.Description <br />
-                                Due: @task.DueDate.ToString("yyyy-MM-dd") <br />
+                                @(isLang ? "Due" : "Data"): @task.DueDate.ToString("yyyy-MM-dd") <br />
                                 Status: @task.Status.ToString()
-                                   <button class="btn btn-primary" @onclick="() => OpenUpdateTaskModal(task)">Update</button>
-                <button class="btn btn-danger" @onclick="() => DeleteTask(task)">Delete</button>
+                                <button class="btn btn-primary" @onclick="() => OpenUpdateTaskModal(task)">@(isLang ? "Update" : "Aktualizuj")</button>
+                                <button class="btn btn-danger" @onclick="() => DeleteTask(task)">@(isLang ? "Delete" : "Usuń")</button>
                             </div>
                         }
                     }
                     else
                     {
-                        <div>No tasks found for this project.</div>
+                        <div>@(isLang ? "No tasks found for this project." : "Nie znaleziono żadnych zadań dla tego projektu.")</div>
                     }
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @onclick="CloseTasksModal">Close</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseTasksModal">@(isLang ? "Close" : "Zamknij")</button>
                 </div>
             </div>
         </div>
@@ -175,22 +175,22 @@ else
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Update Task</h5>
+                    <h5 class="modal-title">@(isLang ? "Update Task" : "Aktualizuj zadanie")</h5>
                     <button type="button" class="close" @onclick="CloseUpdateTaskModal">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="updateTaskTitle">Title</label>
-                        <input type="text" class="form-control" id="updateTaskTitle" @bind="selectedTaskForUpdate.Title">
+                        <label for="updateTaskTitle">@(isLang ? "Title" : "Tytuł")</label>
+                        <input type="text" class="form-control" id="updateTaskTitle" @bind="selectedTaskForUpdate.Title" maxlength="50">
                     </div>
                     <div class="form-group">
-                        <label for="updateTaskDescription">Description</label>
-                        <textarea class="form-control" id="updateTaskDescription" rows="3" @bind="selectedTaskForUpdate.Description"></textarea>
+                        <label for="updateTaskDescription">@(isLang ? "Description" : "Opis")</label>
+                        <textarea class="form-control" id="updateTaskDescription" rows="3" @bind="selectedTaskForUpdate.Description" maxlength="500"></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="updateTaskDueDate">Due Date</label>
+                        <label for="updateTaskDueDate">@(isLang ? "Due date" : "Data")</label>
                         <input type="date" class="form-control" id="updateTaskDueDate" @bind="selectedTaskForUpdate.DueDate">
                     </div>
                     <div class="form-group">
@@ -204,8 +204,8 @@ else
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" @onclick="() => UpdateTask(selectedTaskForUpdate)">Save changes</button>
-                    <button type="button" class="btn btn-secondary" @onclick="CloseUpdateTaskModal">Close</button>
+                    <button type="button" class="btn btn-success" @onclick="() => UpdateTask(selectedTaskForUpdate)">@(isLang ? "Save changes" : "Zapisz zmiany")</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseUpdateTaskModal">@(isLang ? "Close" : "Zamknij")</button>
                 </div>
             </div>
         </div>
@@ -219,7 +219,7 @@ else
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Budget Details</h5>
+                    <h5 class="modal-title">@(isLang ? "Budget Details" : "Detale budżetu")</h5>
                     <button type="button" class="close" @onclick="CloseBudgetModal">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -227,36 +227,36 @@ else
                 <div class="modal-body">
                     <form>
                         <div class="form-group">
-                            <label for="budgetPeriod">Budget Period</label>
+                            <label for="budgetPeriod">@(isLang ? "Budget Period" : "Czas końca budżetu")</label>
                             <p>Budget period: @selectedBudget.BudgetPeriod</p>
                         </div>
                     </form>
-                    <p>Total Income: @selectedBudget.TotalIncome</p>
-                    <p>Total Expenses: @selectedBudget.TotalExpenses</p>
-                    <p>Balance: @selectedBudget.Balance</p>
+                    <p>@(isLang ? "Total Income" : "Całkowity przychód"): @selectedBudget.TotalIncome</p>
+                    <p>@(isLang ? "Total Expenses" : "Całkowite wydatki"): @selectedBudget.TotalExpenses</p>
+                    <p>@(isLang ? "Balance" : "Balans"): @selectedBudget.Balance</p>
 
                     <hr />
-                    <h5>Expenses</h5>
+                    <h5>@(isLang ? "Expenses" : "Wydatki")</h5>
                     @if (selectedBudget.Expenses != null && selectedBudget.Expenses.Any())
                     {
                         foreach (var expense in selectedBudget.Expenses)
                         {
                             <div>
                                 <strong>@expense.Category:</strong> @expense.Amount (Date: @expense.DateIncurred.ToString("yyyy-MM-dd"))
-                                <button class="btn btn-primary btn-sm" @onclick="() => OpenUpdateExpenseModal(expense)">Update</button>
-                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteExpense(expense)">Delete</button>
+                                <button class="btn btn-primary btn-sm" @onclick="() => OpenUpdateExpenseModal(expense)">@(isLang ? "Update" : "Zaktualizuj")</button>
+                                <button class="btn btn-danger btn-sm" @onclick="() => DeleteExpense(expense)">@(isLang ? "Delete" : "Usuń")</button>
                             </div>
                         }
                     }
                     else
                     {
-                        <div>No expenses found for this budget.</div>
+                        <div>@(isLang ? "No expenses found for this budget." : "Nie znaleziono wydatków dla tego budżetu")</div>
                     }
                 </div>
-                <button type="button" class="btn btn-primary" @onclick="OpenAddExpenseModal">Add Expense</button>
+                <button type="button" class="btn btn-primary" @onclick="() => OpenAddExpenseModal(selectedBudget)">@(isLang ? "Add expense" : "Dodaj wydatek")</button>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @onclick="() => UpdateBudget(selectedBudget)">Save Changes</button>
-                    <button type="button" class="btn btn-secondary" @onclick="CloseBudgetModal">Close</button>
+                    <button type="button" class="btn btn-primary" @onclick="() => UpdateBudget(selectedBudget)">@(isLang ? "Save Changes" : "Zapisz zmiany")</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseBudgetModal">@(isLang ? "Close" : "Zamknij")</button>
                 </div>
             </div>
         </div>
@@ -270,7 +270,7 @@ else
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add New Expense</h5>
+                    <h5 class="modal-title">@(isLang ? "Add New Expense" : "Dodaj nowy wydatek")</h5>
                     <button type="button" class="close" @onclick="CloseAddExpenseModal">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -279,22 +279,22 @@ else
                     <form>
                         <!-- Pola formularza do dodania wydatku -->
                         <div class="form-group">
-                            <label for="expenseCategory">Category</label>
-                            <input type="text" class="form-control" id="expenseCategory" @bind="@newExpense.Category">
+                            <label for="expenseCategory">@(isLang ? "Category" : "Kategoria")</label>
+                            <input type="text" class="form-control" id="expenseCategory" @bind="@newExpense.Category" maxlength="50">
                         </div>
                         <div class="form-group">
-                            <label for="expenseAmount">Amount</label>
-                            <input type="number" class="form-control" id="expenseAmount" @bind="@newExpense.Amount">
+                            <label for="expenseAmount">@(isLang ? "Amount" : "Ilość")</label>
+                            <input type="number" class="form-control" min="0.00" max="@selectedBudget.Balance" id="expenseAmount" @bind="@newExpense.Amount">
                         </div>
                         <div class="form-group">
-                            <label for="expenseDate">Date</label>
+                            <label for="expenseDate">@(isLang ? "Date" : "Data")</label>
                             <input type="date" class="form-control" id="expenseDate" @bind="@newExpense.DateIncurred">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" @onclick="() => CreateExpense(newExpense)">Add Expense</button>
-                    <button type="button" class="btn btn-secondary" @onclick="CloseAddExpenseModal">Close</button>
+                    <button type="button" class="btn btn-success" @onclick="() => CreateExpense(newExpense)">@(isLang ? "Add expense" : "Dodaj wydatek")</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseAddExpenseModal">@(isLang ? "Close" : "Zamknij")</button>
                 </div>
             </div>
         </div>
@@ -308,7 +308,7 @@ else
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Update Expense</h5>
+                    <h5 class="modal-title">@(isLang ? "Update Expense" : "Altualizuj wydatek")</h5>
                     <button type="button" class="close" @onclick="CloseUpdateExpenseModal">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -317,18 +317,18 @@ else
                     <form>
                         <!-- Pola formularza do aktualizacji wydatku -->
                         <div class="form-group">
-                            <label for="updateExpenseAmount">Amount</label>
-                            <input type="number" class="form-control" id="updateExpenseAmount" @bind="@selectedExpenseForUpdate.Amount">
+                            <label for="updateExpenseAmount">@(isLang ? "Amount" : "Ilość")</label>
+                            <input type="number" class="form-control" min="0.00" max="@selectedBudget.Balance" id="updateExpenseAmount" @bind="@selectedExpenseForUpdate.Amount">
                         </div>
                         <div class="form-group">
-                            <label for="updateExpenseDate">Date</label>
+                            <label for="updateExpenseDate">@(isLang ? "Date" : "Data")</label>
                             <input type="date" class="form-control" id="updateExpenseDate" @bind="@selectedExpenseForUpdate.DateIncurred">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" @onclick="() => UpdateExpense(selectedExpenseForUpdate)">Save Changes</button>
-                    <button type="button" class="btn btn-secondary" @onclick="CloseUpdateExpenseModal">Close</button>
+                    <button type="button" class="btn btn-success" @onclick="() => UpdateExpense(selectedExpenseForUpdate)">@(isLang ? "Save Changes" : "Zapisz zmiany")</button>
+                    <button type="button" class="btn btn-secondary" @onclick="CloseUpdateExpenseModal">@(isLang ? "Close" : "Zamknij")</button>
                 </div>
             </div>
         </div>
@@ -340,6 +340,7 @@ else
 @code {
     //ON BUILDING SETUP -----------------------------------------------------------------------------
     private string userId = null!;
+    public bool isLang { get; set; }
 
     //LIST
     private List<ProjectDto> projects = new List<ProjectDto>();
@@ -392,11 +393,12 @@ else
     //UPDATE EXPENSE MODEL
     private ExpenseDto? selectedExpenseForUpdate;
     private bool showUpdateExpenseModal = false;
-
+    private ExpenseDto? originalExpenseForUpdate;
     //SETUP METHODS
 
     protected override async Task OnInitializedAsync()
     {
+        isLang = await Http.GetFromJsonAsync<bool>(Navigation.BaseUri + "language/getLang");
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
@@ -452,16 +454,37 @@ else
 
     private async Task AddProjectWithBudget()
     {
+        // Walidacja dat
+        if (projectDto.StartDate >= projectDto.EndDate)
+        {
+            IsErrorMessage = true;
+            Message = "Start date must be earlier than the end date.";
+            _ = HideMessageAfterDelay();
+            StateHasChanged();
+            return;
+        }
+
+        if (projectDto.StartDate < DateTime.Today || projectDto.EndDate < DateTime.Today)
+        {
+            IsErrorMessage = true;
+            Message = "Start date and end date must be future dates.";
+            _ = HideMessageAfterDelay();
+            StateHasChanged();
+            return;
+        }
+
+        // Przypisanie ID
         projectDto.ApplicationUserId = userId;
         projectDto.ProjectId = Guid.NewGuid().ToString();
         budgetDto.BudgetId = Guid.NewGuid().ToString();
         projectDto.BudgetId = budgetDto.BudgetId;
         budgetDto.ProjectId = projectDto.ProjectId;
 
-        var projectResponse = await Http.PostAsJsonAsync(Navigation.BaseUri + $"projects/addProject/{userId}", projectDto);
+        // Tworzenie projektu
+        var projectResponse = await Http.PostAsJsonAsync($"{Navigation.BaseUri}projects/addProject/{userId}", projectDto);
         if (projectResponse.IsSuccessStatusCode)
         {
-            var budgetResponse = await Http.PostAsJsonAsync(Navigation.BaseUri + $"budgets/addBudget/{userId}/project/{projectDto.ProjectId}", budgetDto);
+            var budgetResponse = await Http.PostAsJsonAsync($"{Navigation.BaseUri}budgets/addBudget/{userId}/project/{projectDto.ProjectId}", budgetDto);
             if (budgetResponse.IsSuccessStatusCode)
             {
                 IsErrorMessage = false;
@@ -480,9 +503,28 @@ else
             IsErrorMessage = true;
             Message = "Failed to create a project.";
         }
+
         _ = HideMessageAfterDelay();
         StateHasChanged();
     }
+
+
+    private async Task SetSelectedProjectByBudgetId(string budgetId)
+    {
+        var response = await Http.GetAsync(Navigation.BaseUri + $"projects/getProjectByBudgetId/{budgetId}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var projectJsonString = await response.Content.ReadAsStringAsync();
+            selectedProject = JsonSerializer.Deserialize<ProjectDto>(projectJsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+        else
+        {
+            IsErrorMessage = true;
+            Message = "Failed to get a project.";
+        }
+    }
+
 
     private async Task LoadProjects()
     {
@@ -544,8 +586,6 @@ else
     }
 
     // CRUD BUDGET
-
-
     private async Task OpenBudgetModal(ProjectDto project)
     {
         // Pobieranie szczegółów budżetu
@@ -580,15 +620,26 @@ else
         }
 
         var response = await Http.PutAsJsonAsync(
-            Navigation.BaseUri + $"budgets/updateBudget/{userId}/project/{budgetToUpdate.ProjectId}/budget/{budgetToUpdate.BudgetId}",
+            $"{Navigation.BaseUri}budgets/updateBudget/{userId}/project/{budgetToUpdate.ProjectId}/budget/{budgetToUpdate.BudgetId}",
             budgetToUpdate);
 
         if (response.IsSuccessStatusCode)
         {
-            // Budżet został pomyślnie zaktualizowany
-            await OpenBudgetModal(selectedProject); // Załadowanie szczegółów budżetu ponownie
-            Message = "Budget updated successfully.";
-            IsErrorMessage = false;
+            // Najpierw ustaw selectedProject za pomocą istniejącej metody
+            await SetSelectedProjectByBudgetId(budgetToUpdate.BudgetId);
+
+            // Sprawdź, czy selectedProject został pomyślnie ustawiony
+            if (selectedProject != null)
+            {
+                // Budżet został pomyślnie zaktualizowany
+                Message = "Budget updated successfully.";
+                IsErrorMessage = false;
+            }
+            else
+            {
+                IsErrorMessage = true;
+                Message = "Failed to set selected project.";
+            }
         }
         else
         {
@@ -596,6 +647,7 @@ else
             IsErrorMessage = true;
             Message = "Error occurred while updating the budget.";
         }
+
         _ = HideMessageAfterDelay();
         StateHasChanged();
     }
@@ -745,18 +797,40 @@ else
             return;
         }
 
+        if (expense.Amount <= 0)
+        {
+            IsErrorMessage = true;
+            Message = "The amount must be greater than 0.";
+            _ = HideMessageAfterDelay();
+            return;
+        }
+
+        if (expense.Amount > selectedBudget.Balance)
+        {
+            IsErrorMessage = true;
+            Message = "The amount cannot exceed the available budget balance.";
+            _ = HideMessageAfterDelay();
+            return;
+        }
+
         expense.ExpenseId = Guid.NewGuid().ToString();
         expense.FK_BudgetId = selectedBudget.BudgetId;
 
         var response = await Http.PostAsJsonAsync(
-            Navigation.BaseUri + $"expenses/addExpense/{userId}/budgets/{selectedBudget.BudgetId}",
+            $"{Navigation.BaseUri}expenses/addExpense/{userId}/budgets/{selectedBudget.BudgetId}",
             expense);
 
         if (response.IsSuccessStatusCode)
         {
             IsErrorMessage = false;
             Message = "Expense added successfully.";
-            await LoadExpenses(selectedBudget.BudgetId); // Ponowne załadowanie wydatków
+
+            // Aktualizacja całkowitych wydatków
+            selectedBudget.TotalExpenses += expense.Amount;
+
+            // Ponowne załadowanie wydatków i aktualizacja budżetu
+            await LoadExpenses(selectedBudget.BudgetId);
+            await UpdateBudget(selectedBudget);
         }
         else
         {
@@ -768,34 +842,68 @@ else
         StateHasChanged();
     }
 
-    private async Task UpdateExpense(ExpenseDto expense)
+
+    private async Task UpdateExpense(ExpenseDto updatedExpense)
     {
-        if (expense == null)
+        if (updatedExpense == null || selectedBudget == null || originalExpenseForUpdate == null)
         {
             IsErrorMessage = true;
-            Message = "Cannot update null expense.";
+            Message = "Cannot update as one of the required objects is null.";
             _ = HideMessageAfterDelay();
             return;
         }
 
-        var response = await Http.PutAsJsonAsync(
-            Navigation.BaseUri + $"expenses/updateExpense/{userId}/budgets/{expense.FK_BudgetId}/expense/{expense.ExpenseId}",
-            expense);
+        if (updatedExpense.Amount <= 0)
+        {
+            IsErrorMessage = true;
+            Message = "The amount must be greater than 0.";
+            _ = HideMessageAfterDelay();
+            return;
+        }
 
+        var newTotalExpenses = selectedBudget.TotalExpenses - originalExpenseForUpdate.Amount + updatedExpense.Amount;
+        if (newTotalExpenses > selectedBudget.TotalIncome)
+        {
+            IsErrorMessage = true;
+            Message = "The updated amount cannot exceed the available budget balance.";
+            _ = HideMessageAfterDelay();
+            return;
+        }
+
+        // Oblicz różnicę w kwocie i zaktualizuj TotalExpenses
+        var amountDifference = updatedExpense.Amount - originalExpenseForUpdate.Amount;
+        selectedBudget.TotalExpenses += amountDifference;
+
+        var response = await Http.PutAsJsonAsync($"{Navigation.BaseUri}expenses/updateExpense/{userId}/budgets/{updatedExpense.FK_BudgetId}/expense/{updatedExpense.ExpenseId}", updatedExpense);
         if (response.IsSuccessStatusCode)
         {
-            // Zaktualizuj lokalną listę wydatków
-            var index = selectedBudget.Expenses.FindIndex(e => e.ExpenseId == expense.ExpenseId);
-            if (index != -1)
+            // Aktualizuj wydatek w lokalnej liście
+            var expenseIndex = selectedBudget.Expenses.FindIndex(e => e.ExpenseId == updatedExpense.ExpenseId);
+            if (expenseIndex != -1)
             {
-                selectedBudget.Expenses[index] = expense;
+                selectedBudget.Expenses[expenseIndex] = updatedExpense;
             }
+            else
+            {
+                IsErrorMessage = true;
+                Message = "Failed to find the expense in the list for updating.";
+                _ = HideMessageAfterDelay();
+                StateHasChanged();
+                return;
+            }
+
+            await UpdateBudget(selectedBudget);
+
             CloseUpdateExpenseModal();
+
             Message = "Expense updated successfully.";
             IsErrorMessage = false;
         }
         else
         {
+            // If the response is not successful, revert the changes
+            selectedBudget.TotalExpenses -= amountDifference;
+
             IsErrorMessage = true;
             Message = "Failed to update expense.";
         }
@@ -807,21 +915,28 @@ else
 
     private async Task DeleteExpense(ExpenseDto expense)
     {
-        if (expense == null)
+        if (expense == null || selectedBudget == null)
         {
             IsErrorMessage = true;
-            Message = "Cannot delete null expense.";
+            Message = "Cannot delete null expense or selected budget is null.";
             _ = HideMessageAfterDelay();
             return;
         }
 
-        var response = await Http.DeleteAsync(
-            Navigation.BaseUri + $"expenses/deleteExpense/{userId}/budgets/{expense.FK_BudgetId}/expense/{expense.ExpenseId}");
+    var response = await Http.DeleteAsync(
+        Navigation.BaseUri + $"expenses/deleteExpense/{userId}/budgets/{expense.FK_BudgetId}/expense/{expense.ExpenseId}");
 
         if (response.IsSuccessStatusCode)
         {
             // Usuń wydatek z lokalnej listy, aby odświeżyć UI
             selectedBudget.Expenses.Remove(expense);
+
+            // Zaktualizuj całkowite wydatki i bilans w budżecie
+            selectedBudget.TotalExpenses -= expense.Amount;
+
+            // Aktualizuj budżet na serwerze
+            await UpdateBudget(selectedBudget);
+
             Message = "Expense deleted successfully.";
             IsErrorMessage = false;
         }
@@ -834,6 +949,7 @@ else
         _ = HideMessageAfterDelay();
         StateHasChanged();
     }
+
 
 
     //Models
@@ -869,10 +985,14 @@ else
         showUpdateTaskModal = false;
     }
 
-    private void OpenAddExpenseModal()
+    private void OpenAddExpenseModal(BudgetDto selectedBudget)
     {
-        newExpense = new ExpenseDto(); // Resetuj formularz
+        newExpense = new ExpenseDto
+        {
+            DateIncurred = DateTime.Today
+        };
         showAddExpenseModal = true;
+        StateHasChanged(); // Odświeżenie stanu, aby zmiany zostały odzwierciedlone w UI
     }
 
     // Metoda do zamykania modala dodawania wydatku
@@ -883,14 +1003,27 @@ else
 
     private void OpenUpdateExpenseModal(ExpenseDto expense)
     {
-        selectedExpenseForUpdate = expense;
+        originalExpenseForUpdate = new ExpenseDto
+            {
+                ExpenseId = expense.ExpenseId,
+                Amount = expense.Amount,
+                Category = expense.Category,
+                DateIncurred = expense.DateIncurred
+            };
+        selectedExpenseForUpdate = expense; // To może być referencja do obiektu, który będzie edytowany w modalu
         showUpdateExpenseModal = true;
+
     }
+
 
     private void CloseUpdateExpenseModal()
     {
-        showUpdateExpenseModal = false;
-    }   
+        showUpdateExpenseModal = false; // Zamknij modal
+        originalExpenseForUpdate = null; // Resetuj oryginalny wydatek
+        selectedExpenseForUpdate = null; // Resetuj wybrany wydatek do aktualizacji
+        StateHasChanged(); // Odśwież stan komponentu
+    }
+
 
     //HELPERS
     private async Task HideMessageAfterDelay()

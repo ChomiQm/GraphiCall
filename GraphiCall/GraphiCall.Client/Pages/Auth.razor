@@ -1,10 +1,15 @@
 ﻿@page "/auth"
 
+@using GraphiCall.Client.DTO
 @using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
 
 @attribute [Authorize]
 @rendermode InteractiveAuto
 
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
 <PageTitle>Auth</PageTitle>
 
 <style>
@@ -47,27 +52,41 @@
             border-color: #0056b3;
             outline: none;
         }
+
+        .darkMode{
+        background-color: black;
+        }
+
+        .whiteMode{
+            background-color: white;
+        }
+
 </style>
+
+@if (!string.IsNullOrEmpty(Message))
+{
+    <div class="alert alert-success">@Message</div>
+}
+
 
 <div class="authentication-container">
     <h1>You are authenticated</h1>
 
     <AuthorizeView>
         <h2>Hello @context.User.Identity?.Name!</h2>
-
         <div class="navigation-container">
-            <h2>Which of these do you want to use? <br></h2>
+            <h2>@(isLang ? "Which of these do you want to use?" : "Czego chcesz użyć?") <br></h2>
             <div>
                 <NavLink class="nav-link" href="/whiteboard">Whiteboard</NavLink>
             </div>
             <div>
-                <NavLink class="nav-link" href="/note">Notes</NavLink>
+                <NavLink class="nav-link" href="/note">@(isLang ? "Notes" : "Notatki")</NavLink>
             </div>
             <div>
-                <NavLink class="nav-link" href="/calendar">Calendar</NavLink>
+                <NavLink class="nav-link" href="/calendar">@(isLang ? "Calendar" : "Kalendarz")</NavLink>
             </div>
             <div>
-                <NavLink class="nav-link" href="/project">Project</NavLink>
+                <NavLink class="nav-link" href="/project">@(isLang ? "Project" : "Projekt")</NavLink>
             </div>
             <div>
                 <NavLink class="nav-link" href="/chat">Chat</NavLink>
@@ -75,3 +94,27 @@
         </div>
     </AuthorizeView>
 </div>
+
+@code {
+    private string userId = null!;
+    public bool isLang { get; set; }
+    private string Message = string.Empty;
+    string lang = null!;
+    protected override async Task OnParametersSetAsync()
+    {
+        isLang = await Http.GetFromJsonAsync<bool>(Navigation.BaseUri + "language/getLang");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        lang = isLang ? "Project" : "Projekt";
+    }
+
+    private async Task HideMessageAfterDelay()
+    {
+        await Task.Delay(15000); // Czekaj 15 sekund
+        Message = string.Empty;
+        StateHasChanged();
+    }
+
+}

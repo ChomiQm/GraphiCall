@@ -9,8 +9,9 @@
 {
     <div>
         <p>
-            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-            about setting up this ASP.NET application to support logging in via external services</a>.
+            @(isLang ? "There are no external authentication services configured. See this" : "Nie ma jeszcze zaimplementowanych możliwości logowań z innyhc serwisów, patrz") <a href="https://go.microsoft.com/fwlink/?LinkID=532715">
+                @(isLang ? "article about setting up this ASP.NET application to support logging in via external services" : "artykuł nt. tego jak użyć w ASP.NET aplikacji wspierających metod logowania stron trzecich.")
+            </a>.
         </p>
     </div>
 }
@@ -31,6 +32,9 @@ else
 }
 
 @code {
+    [CascadingParameter]
+    public bool isLang { get; set; }
+
     private AuthenticationScheme[] externalLogins = [];
 
     [SupplyParameterFromQuery]

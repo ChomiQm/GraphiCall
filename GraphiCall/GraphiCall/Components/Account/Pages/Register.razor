@@ -30,7 +30,7 @@
         <StatusMessage Message="@Message" />
         <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register">
             <DataAnnotationsValidator />
-            <h2>Create a new account.</h2>
+            <h2>@(isLang ? "Create new account" : "Stwórz nowe konto")</h2>
             <hr />
             <ValidationSummary class="text-danger" role="alert" />
             <div class="form-floating mb-3">
@@ -40,18 +40,18 @@
             </div>
             <div class="form-floating mb-3">
                 <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="password">Password</label>
-                <small class="form-text text-muted">Password must be at least 6 characters long, and must include at least one uppercase letter, one lowercase letter, one number, and one special character.</small>
+                <label for="password">@(isLang ? "Password" : "Hasło")</label>
+                <small class="form-text text-muted">@(isLang ? "Password must be at least 6 characters long, and must include at least one uppercase letter, one lowercase letter, one number, and one special character" : "Twoje hasło powinno zawierać conajmniej jedną dużą i małą literę, znak i liczbę").</small>
                 <ValidationMessage For="() => Input.Password" class="text-danger" />
             </div>
             <div class="form-floating mb-3">
                 <InputText type="password" @bind-Value="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label for="confirm-password">Confirm Password</label>
+                <label for="confirm-password">@(isLang ? "Confirm password" : "Potwierdź hasło")</label>
                 <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
             </div>
             <div class="form-floating mb-3">
                 <InputText @bind-Value="Input.PhoneNumber" class="form-control" autocomplete="phone number" aria-required="true" placeholder="+01 000-000-000" />
-                <label for="phoneNumber">Phone Number</label>
+                <label for="phoneNumber">@(isLang ? "Phone number" : "Numer telefonu")</label>
                 <ValidationMessage For="() => Input.PhoneNumber" class="text-danger" />
             </div>
             <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
@@ -59,9 +59,11 @@
     </div>
     <div class="col-md-6 col-md-offset-2">
         <section>
-            <h3>Use another service to register.</h3>
+            <h3>@(isLang ? "Use another service to log in" : "Użyj innego serwisu logowania")</h3>
             <hr />
-            <ExternalLoginPicker />
+            <CascadingValue Value="@isLang">
+                <ExternalLoginPicker />
+            </CascadingValue>
         </section>
     </div>
 </div>
@@ -69,6 +71,9 @@
 @code {
     private IEnumerable<IdentityError>? identityErrors;
     private string? Message { get; set; }
+
+    [CascadingParameter]
+    public bool isLang { get; set; }
 
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = new();

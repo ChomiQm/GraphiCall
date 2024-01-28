@@ -1,5 +1,6 @@
 ﻿@page "/"
-
+@inject HttpClient Http
+@inject NavigationManager Navigation
 <PageTitle>Home</PageTitle>
 
 <style>
@@ -24,9 +25,13 @@
 <div class="container">
     <h1>Hi!</h1>
     <p class="description">
-        Aplikacja webowa - GraphiCall, zawiera w sobie kalendarz, chat, komponent notatek,
-        komponent planowania budżetu i whiteboard. Aplikacja została napisana z wykorzystaniem
-        .NET 8.0, Blazor, JavaScript, CSS oraz Azure, oferując zaawansowane funkcje i
-        interaktywne środowisko użytkownika dla efektywnego zarządzania projektami i komunikacji.
+        @(isLang ? "Web application - GraphiCall, includes a calendar, chat, notes component, budget planning component, and whiteboard. The application is written using .NET 8.0, Blazor, JavaScript, CSS, and Azure, offering advanced features and an interactive user environment for effective project management and communication." :
+            "Aplikacja webowa - GraphiCall, zawiera w sobie kalendarz, chat, komponent notatek, komponent planowania budżetu i whiteboard. Aplikacja została napisana z wykorzystaniem .NET 8.0, Blazor, JavaScript, CSS oraz Azure, oferując zaawansowane funkcje i interaktywne środowisko użytkownika dla efektywnego zarządzania projektami i komunikacji.")
     </p>
 </div>
+
+
+@code {
+    [CascadingParameter]
+    public bool isLang { get; set; }
+}

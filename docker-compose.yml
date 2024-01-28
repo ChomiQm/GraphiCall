@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+  graphical.backend:
+    image: graphical/backend
+    build:
+      context: ./GraphiCall
+      dockerfile: GraphiCall/dockerfile
+    ports:
+      - "5126:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=tcp:graphicalldb.database.windows.net,1433;Initial Catalog=graphicall_db;Persist Security Info=False;User ID=graphicall_admin;Password=Pysiec123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;
+
+  graphical.client:
+    image: graphical/client
+    build:
+      context: ./GraphiCall
+      dockerfile: GraphiCall.Client/dockerfile
+    ports:
+      - "7145:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+    depends_on:
+      - graphical.backend

@@ -197,13 +197,13 @@
     <div>
         @if (!calendarExists)
         {
-            <button @onclick="CreateCalendarParams">Create a New Calendar</button>
+            <button @onclick="CreateCalendarParams">@(isLang ? "Create a New Calendar" : "Stwórz nowy kalendarz")</button>
         }
         else if (calendar != null)
         {
             <div class="uklad">
-                <h3>Your Calendar: @calendar.Name</h3>
-                <h4>Description: @calendar.Description</h4>
+                <h3>@(isLang ? "Your Calendar" : "Twój kalendarz"): @calendar.Name</h3>
+                <h4>@(isLang ? "Description" : "Opis"): @calendar.Description</h4>
 
                 <select @onchange="@LoadCalendar">
                     @foreach (string monthName in monthNames)
@@ -222,7 +222,7 @@
                             <div class="form-section">
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label>From Date: </label>
+                                        <label>@(isLang ? "From Date" : "Od"): </label>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="date" @bind="fromDate" style="width:100%;" />
@@ -230,7 +230,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label>To Date: </label>
+                                        <label>@(isLang ? "To Date" : "Do"): </label>
                                     </div>
                                     <div class="col-md-8">
                                         <input type="date" @bind="toDate" style="width:100%;" />
@@ -238,29 +238,29 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label>Title: </label>
+                                        <label>@(isLang ? "Title" : "Tytuł"): </label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" @bind="title" style="width:100%;" />
+                                        <input type="text" @bind="title" style="width:100%;" maxlength="50" />
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label>Description: </label>
+                                        <label>@(isLang ? "Description" : "Opis"): </label>
                                     </div>
                                     <div class="col-md-8">
-                                        <input type="text" @bind="description" style="width:100%;" />
+                                        <input type="text" @bind="description" style="width:100%;" maxlength="500" />
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-4">
-                                        <label>Color: </label>
+                                        <label>@(isLang ? "Importance" : "Ważność"): </label>
                                     </div>
                                     <div class="col-md-8">
                                         <select @bind="selectedColor" style="width:100%;">
-                                            <option value="green">Green</option>
-                                            <option value="yellow">Yellow</option>
-                                            <option value="red">Red</option>
+                                            <option value="green">@(isLang ? "Green" : "Zielony")</option>
+                                            <option value="yellow">@(isLang ? "Yellow" : "Żólty")</option>
+                                            <option value="red">@(isLang ? "Red" : "Czerwony")</option>
                                         </select>
                                     </div>
                                 </div>
@@ -268,42 +268,42 @@
                                     <div class="col-md-6">
                                     </div>
                                     <div class="col-md-6" style="text-align:right;">
-                                        <button class="btn-success" style="float:left; margin-right:5px;" @onclick="AddEvent" disabled="@isEditEventModelVisible">Save</button>
-                                        <button class="btn btn-danger" @onclick="CloseModel" style="float:left;" disabled="@isEditEventModelVisible">Exit</button>
+                                        <button class="btn-success" style="float:left; margin-right:5px;" @onclick="AddEvent" disabled="@isEditEventModelVisible">@(isLang ? "Save" : "Zapisz")</button>
+                                        <button class="btn btn-danger" @onclick="CloseModel" style="float:left;" disabled="@isEditEventModelVisible">@(isLang ? "Exit" : "Wyjdź")</button>
                                     </div>
                                 </div>
                             </div>
 
                         </div>
                         <div class="events-section">
-                            <h3>Dodane Wydarzenia:</h3>
+                            <h3>@(isLang ? "Added events" : "Dodane Wydarzenia"):</h3>
                             @foreach (var calendarevent in addedEvents)
                             {
                                 <div class="eventItem">
-                                    <p>Start date: @calendarevent.FromDate.ToShortDateString() End date: @calendarevent.ToDate.ToShortDateString()</p>
-                                    <p>Title: @calendarevent.Title</p>
-                                    <p>Description: @calendarevent.Description</p>
-                                    <p>Importance: @calendarevent.Color</p>
-                                    <button class="btn btn-warning" @onclick="() => ShowEditModel(calendarevent)" disabled="@isEditEventModelVisible">Update</button>
-                                    <button class="btn btn-danger" @onclick="() => DeleteEvent(calendarevent)" disabled="@isEditEventModelVisible">Delete</button>
+                                    <p>@(isLang ? "Start date" : "Od"): @calendarevent.FromDate.ToShortDateString() @(isLang ? "End date" : "Do"): @calendarevent.ToDate.ToShortDateString()</p>
+                                    <p>@(isLang ? "Title" : "Tytuł"): @calendarevent.Title</p>
+                                    <p>@(isLang ? "Description" : "Opis"): @calendarevent.Description</p>
+                                    <p>@(isLang ? "Importnace" : "Ważność"): @calendarevent.Color</p>
+                                    <button class="btn btn-warning" @onclick="() => ShowEditModel(calendarevent)" disabled="@isEditEventModelVisible">@(isLang ? "Update" : "Aktualizuj")</button>
+                                    <button class="btn btn-danger" @onclick="() => DeleteEvent(calendarevent)" disabled="@isEditEventModelVisible">@(isLang ? "Delete" : "Usuń")</button>
                                 </div>
                             }
                         </div>
                         @if (isEditEventModelVisible)
                         {
                             <div class="edit-model">
-                                <h3>Edit Event</h3>
-                                <input type="text" @bind="selectedEventForEdit.Title" />
+                                <h3>@(isLang ? "Edit event" : "Edytuj wydarzenie")</h3>
+                                <input type="text" @bind="selectedEventForEdit.Title" maxlength="50" />
                                 <input type="date" @bind="selectedEventForEdit.FromDate" />
                                 <input type="date" @bind="selectedEventForEdit.ToDate" />
-                                <input type="text" @bind="selectedEventForEdit.Description" />
+                                <input type="text" @bind="selectedEventForEdit.Description" maxlength="500" />
                                 <select @bind="selectedEventForEdit.Color">
-                                    <option value="green">Green</option>
-                                    <option value="yellow">Yellow</option>
-                                    <option value="red">Red</option>
+                                    <option value="green">@(isLang ? "Green" : "Zielony")</option>
+                                    <option value="yellow">@(isLang ? "Yellow" : "Żólty")</option>
+                                    <option value="red">@(isLang ? "Red" : "Czerwony")</option>
                                 </select>
-                                <button class="btn btn-warning" @onclick="SubmitEdit">Submit</button>
-                                <button class="btn btn-danger" @onclick="CloseEditModel">Cancel</button>
+                                <button class="btn btn-warning" @onclick="SubmitEdit">@(isLang ? "Submit" : "Zatwierdź")</button>
+                                <button class="btn btn-danger" @onclick="CloseEditModel">@(isLang ? "Cancel" : "Anuluj")</button>
                             </div>
                         }
                     </div>
@@ -340,7 +340,7 @@
                                             }
                                             @if (sortedEvents.Count > maxEventsToShow)
                                             {
-                                                <span>+ więcej</span>
+                                                <span>+ @(isLang ? "More" : "Więcej")</span>
                                             }
                                         </td>
                                     }
@@ -352,17 +352,17 @@
             </div>
 
             <div class="przyciski">
-                <button class="btn btn-warning" @onclick="ShowEditCalendarModel" disabled="@isDisplayModelVisible">Update Calendar</button>
-                <button class="btn btn-danger" @onclick="DeleteCalendar" disabled="@isDisplayModelVisible">Delete Calendar</button>
+                <button class="btn btn-warning" @onclick="ShowEditCalendarModel" disabled="@isDisplayModelVisible">@(isLang ? "Update Calendar" : "Aktualizuj kalendarz")</button>
+                <button class="btn btn-danger" @onclick="DeleteCalendar" disabled="@isDisplayModelVisible">@(isLang ? "Delete Calendar" : "Usuń kalendarz")</button>
             </div>
             @if (isEditCalendarModelVisible)
             {
                 <div class="calendarModel">
-                    <h3>Update Calendar</h3>
-                    <input type="text" @bind="calendar.Name" />
-                    <input type="text" @bind="calendar.Description" />
-                    <button @onclick="UpdateCalendar">Submit</button>
-                    <button @onclick="CloseEditCalendarModel">Cancel</button>
+                    <h3>@(isLang ? "Update Calendar" : "Aktualizuj kalendarz")</h3>
+                    <input type="text" @bind="calendar.Name" maxlength="50" />
+                    <input type="text" @bind="calendar.Description" maxlength="500" />
+                    <button @onclick="UpdateCalendar">@(isLang ? "Submit" : "Zatwierdź")</button>
+                    <button @onclick="CloseEditCalendarModel">@(isLang ? "Cancel" : "Anuluj")</button>
                 </div>
             }
         }
@@ -372,7 +372,7 @@
 
 @code {
     //ON BUILDING SETUP -----------------------------------------------------------------------------
-
+    public bool isLang { get; set; }
     private string userId = null!;
     private string? calendarId;
     private bool calendarExists = false;
@@ -423,6 +423,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        isLang = await Http.GetFromJsonAsync<bool>(Navigation.BaseUri + "language/getLang");
         monthNames = new CultureInfo("en-GB").DateTimeFormat.MonthGenitiveNames
             .Where(m => !string.IsNullOrEmpty(m))
             .ToList();

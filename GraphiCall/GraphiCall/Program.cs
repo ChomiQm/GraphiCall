@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using GraphiCall.Helpers;
 using GraphiCall.Hubs;
 using System.Text.Json.Serialization;
+using GraphiCall.Client;
+using Blazored.LocalStorage;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,6 +19,7 @@ builder.Services.AddSignalR().AddJsonProtocol(options =>
     options.PayloadSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
 });
 
+builder.Services.AddBlazoredLocalStorage();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

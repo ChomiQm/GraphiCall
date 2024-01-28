@@ -22,7 +22,6 @@
 }
 <AuthorizeView>
     <style type="text/css">
-        /* Styl ogólny dla kontenera notatek */
         .container {
             max-width: 900px;
             margin: auto;
@@ -31,7 +30,7 @@
             border-radius: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        /* Stylizacja karty notatki */
+
         .card {
             background-color: #fff;
             border-radius: 10px;
@@ -48,7 +47,6 @@
             padding: 15px;
         }
 
-        /* Stylizacja przycisków  */
         .btn {
             border: none;
             border-radius: 5px;
@@ -97,23 +95,21 @@
         }
 
         .btn-add-note {
-            display: inline-block; /* lub 'block' jeśli ma być na całej szerokości */
-            width: auto; /* lub konkretna szerokość, np. '150px' */
+            display: inline-block; 
+            width: auto; 
             margin-top: 15px;
         }
 
-        /* Stylizacja przycisków w modalnym oknie */
         .modal-footer .btn {
             margin: 5px;
         }
 
-        /* Stylizacja modalnego okna */
         .modal {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: rgba(255, 255, 255, 0.5); /* Ustaw przezroczystość na 50% */
+            background-color: rgba(255, 255, 255, 0.5); 
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -127,7 +123,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
-            z-index: 500; /* Pod modalnym oknem */
+            z-index: 500; 
         }
 
         .modal-header, .modal-footer {
@@ -166,7 +162,7 @@
     </style>
     <h2>Hello @context.User.Identity?.Name!</h2>
     <div class="container mt-4">
-        <h1>Your Notes</h1>
+        <h1>@(isLang ? "Your Notes" : "Twoje notatki")</h1>
         <div class="row">
             <div class="col">
                 @if (notes != null && notes.Any())
@@ -182,12 +178,12 @@
                                     </div>
                                     <div class="card-footer">
                                         <small class="text-muted">
-                                            Last updated @(note.UpdatedAt.HasValue ? note.UpdatedAt.Value.ToString("g") : "never")
+                                            @(isLang ? "Last updated" : "Ostatnia aktualizacja") @(note.UpdatedAt.HasValue ? note.UpdatedAt.Value.ToString("g") : "never")
                                             <br>
-                                            Priority: @note.Priority
+                                            @(isLang ? "Priority" : "Priorytet"): @note.Priority
                                         </small>
-                                        <button class="btn btn-warning btn-sm" @onclick="@(() => OpenNoteEditModel(note))">Edit</button>
-                                        <button class="btn btn-danger btn-sm" @onclick="@(() => DeleteNote(note))">Delete</button>
+                                        <button class="btn btn-warning btn-sm" @onclick="@(() => OpenNoteEditModel(note))">@(isLang ? "Edit" : "Edytuj")</button>
+                                        <button class="btn btn-danger btn-sm" @onclick="@(() => DeleteNote(note))">@(isLang ? "Delete" : "Usuń")</button>
                                     </div>
                                 </div>
                             </div>
@@ -196,13 +192,13 @@
                 }
                 else
                 {
-                    <p>No notes found.</p>
+                    <p>@(isLang ? "No notes found." : "Nie znaleziono notatek.")</p>
                 }
             </div>
         </div>
         <div class="row justify-content-center">
             <div class="col-md-4 text-center">
-                <button class="btn btn-primary btn-add-note" @onclick="OpenNoteModel">Add Note</button>
+                <button class="btn btn-primary btn-add-note" @onclick="OpenNoteModel">@(isLang ? "Add Note" : "Dodaj notatke")</button>
             </div>
         </div>
     </div>
@@ -214,21 +210,21 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">New Note</h5>
+                        <h5 class="modal-title">@(isLang ? "New Note" : "Nowa notatka")</h5>
                         <button type="button" class="close" @onclick="CloseNoteModel"> </button>
 
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="noteTitle">Title</label>
-                            <input type="text" class="form-control" id="noteTitle" @bind="newNote.Title">
+                            <label for="noteTitle">@(isLang ? "Title" : "Tytuł")</label>
+                            <input type="text" class="form-control" id="noteTitle" @bind="newNote.Title" maxlength="50">
                         </div>
                         <div class="form-group">
-                            <label for="noteContent">Content</label>
-                            <textarea class="form-control" id="noteContent" rows="3" @bind="newNote.Content"></textarea>
+                            <label for="noteContent">@(isLang ? "Content" : "Opis")</label>
+                            <textarea class="form-control" id="noteContent" rows="3" @bind="newNote.Content" maxlength="500"></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="notePriority">Priority</label>
+                            <label for="notePriority">@(isLang ? "Priority" : "Priorytet")</label>
                             <select class="form-control" id="notePriority" @bind="newNote.Priority">
                                 @foreach (var priority in Enum.GetValues(typeof(NotePriority)))
                                 {
@@ -238,8 +234,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" @onclick="CreateNote">Save changes</button>
-                        <button type="button" class="btn btn-danger" @onclick="CloseNoteModel">Close</button>
+                        <button type="button" class="btn btn-success" @onclick="CreateNote">@(isLang ? "Save changes" : "Zapisz zmiany")</button>
+                        <button type="button" class="btn btn-danger" @onclick="CloseNoteModel">@(isLang ? "Close" : "Zamknij")</button>
                     </div>
                 </div>
             </div>
@@ -252,22 +248,22 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Edit Note</h5>
+                        <h5 class="modal-title">@(isLang ? "Edit Note" : "Edytuj notatke")</h5>
                         <button type="button" class="close" @onclick="CloseEditNoteModel" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="noteTitle">Title</label>
-                            <input type="text" class="form-control" id="noteTitle" @bind="selectedNote.Title">
+                            <label for="noteTitle">@(isLang ? "Title" : "Tytuł")</label>
+                            <input type="text" class="form-control" id="noteTitle" @bind="selectedNote.Title" maxlength="50">
                         </div>
                         <div class="form-group">
-                            <label for="noteContent">Content</label>
-                            <textarea class="form-control" id="noteContent" rows="3" @bind="selectedNote.Content"></textarea>
+                            <label for="noteContent">@(isLang ? "Content" : "Opis")</label>
+                            <textarea class="form-control" id="noteContent" rows="3" @bind="selectedNote.Content" maxlength="500"></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="notePriority">Priority</label>
+                            <label for="notePriority">@(isLang ? "Priority" : "Priorytet")</label>
                             <select class="form-control" id="notePriority" @bind="selectedNote.Priority">
                                 @foreach (var priority in Enum.GetValues(typeof(NotePriority)))
                                 {
@@ -277,8 +273,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-success" @onclick="UpdateNote">Save changes</button>
-                        <button type="button" class="btn btn-danger" @onclick="CloseEditNoteModel">Exit</button>
+                        <button type="button" class="btn btn-success" @onclick="UpdateNote">@(isLang ? "Save changes" : "Zapisz zmiany")</button>
+                        <button type="button" class="btn btn-danger" @onclick="CloseEditNoteModel">@(isLang ? "Exit" : "Wyjdź")</button>
                     </div>
                 </div>
             </div>
@@ -293,7 +289,7 @@
     //ON BUILDING SETUP -----------------------------------------------------------------------------
     private string userId = null!;
     private bool noteEditModel = false;
-
+    public bool isLang { get; set; }
     private NoteDto newNote = new NoteDto();
 
     //MODEL
@@ -313,6 +309,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        isLang = await Http.GetFromJsonAsync<bool>(Navigation.BaseUri + "language/getLang");
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 

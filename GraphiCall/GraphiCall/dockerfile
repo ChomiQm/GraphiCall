@@ -1,0 +1,20 @@
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["GraphiCall/GraphiCall.csproj", "GraphiCall/"]
+RUN dotnet restore "GraphiCall/GraphiCall.csproj"
+COPY . .
+WORKDIR "/src/GraphiCall"
+RUN dotnet build "GraphiCall.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "GraphiCall.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "GraphiCall.dll"]

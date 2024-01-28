@@ -1,0 +1,18 @@
+# Use the Microsoft's official build .NET image.
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+WORKDIR /app
+
+# Copy csproj and restore as distinct layers
+COPY ["GraphiCall.Client/GraphiCall.Client.csproj", "./GraphiCall.Client/"]
+RUN dotnet restore "./GraphiCall.Client/GraphiCall.Client.csproj"
+
+# Copy everything else and build
+COPY GraphiCall.Client/. ./GraphiCall.Client/
+WORKDIR /app/GraphiCall.Client
+RUN dotnet publish -c Release -o out
+
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+COPY --from=build-env /app/GraphiCall.Client/out .
+ENTRYPOINT ["dotnet", "GraphiCall.Client.dll"]

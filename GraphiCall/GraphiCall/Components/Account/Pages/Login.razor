@@ -19,7 +19,7 @@
             <StatusMessage Message="@errorMessage" />
             <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
                 <DataAnnotationsValidator />
-                <h2>Use a local account to log in.</h2>
+                <h2>@(isLang ? "Use your local account to log in" : "Zaloguj się")</h2>
                 <hr />
                 <ValidationSummary class="text-danger" role="alert" />
                 <div class="form-floating mb-3">
@@ -35,7 +35,7 @@
                 <div class="checkbox mb-3">
                     <label class="form-label">
                         <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
-                        Remember me
+                        @(isLang ? "Remember me" : "Pamiętaj mnie")
                     </label>
                 </div>
                 <div>
@@ -43,13 +43,13 @@
                 </div>
                 <div>
                     <p>
-                        <a href="Account/ForgotPassword">Forgot your password?</a>
+                        <a href="Account/ForgotPassword">@(isLang ? "Forgot your password?" : "Zapomniałeś hasła?")</a>
                     </p>
                     <p>
-                        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</a>
+                        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))"> @(isLang ? "Register as a new user" : "Zarejestruj się jako nowy użytkownik")</a>
                     </p>
                     <p>
-                        <a href="Account/ResendEmailConfirmation">Resend email confirmation</a>
+                        <a href="Account/ResendEmailConfirmation">@(isLang ? "Resend email confirmation" : "Wyślij ponownie link potwierdzający maila")</a>
                     </p>
                 </div>
             </EditForm>
@@ -57,15 +57,20 @@
     </div>
     <div class="col-md-6 col-md-offset-2">
         <section>
-            <h3>Use another service to log in.</h3>
+            <h3>@(isLang ? "Use another service to log in" : "Użyj innego serwisu logowania")</h3>
             <hr />
+             <CascadingValue Value="@isLang">
             <ExternalLoginPicker />
+            </CascadingValue>
         </section>
     </div>
 </div>
 
 @code {
     private string? errorMessage;
+
+    [CascadingParameter]
+    public bool isLang { get; set; }
 
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;

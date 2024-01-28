@@ -56,19 +56,22 @@
 
     <div class="button-container">
         <input type="file" id="load" />
-        <button id="save" class="whiteboard-button">Save file</button>
-        <button id="clear" class="whiteboard-button">Clear</button>
-        <button id="undo" class="whiteboard-button">Undo</button>
-        <button id="redo" class="whiteboard-button">Redo</button>
-        <button id="saveJSON" class="whiteboard-button">Save as JSON</button>
-        <button @onclick="SaveCurrentWhiteboard" class="whiteboard-button">Zapisz Whiteboard</button>
-        <button id="onLoad" @onclick="LoadWhiteboard" class="whiteboard-button">Wczytaj Whiteboard</button>
+        <button id="save" class="whiteboard-button">@(isLang ? "Save file" : "Zapisz plik")</button>
+        <button id="clear" class="whiteboard-button">@(isLang ? "Clear" : "Wyczyść")</button>
+        <button id="undo" class="whiteboard-button">@(isLang ? "Undo" : "Wróć")</button>
+        <button id="redo" class="whiteboard-button">@(isLang ? "Redo" : "Przywróć")</button>
+        <button id="saveJSON" class="whiteboard-button">@(isLang ? "Save as JSON" : "Zapisz jako JSON")</button>
+        <button @onclick="SaveCurrentWhiteboard" class="whiteboard-button">@(isLang ? "Save whiteboard" : "Zapisz whiteboard")</button>
+        <button id="onLoad" @onclick="LoadWhiteboard" class="whiteboard-button">@(isLang ? "Get whiteboard" : "Wczytaj whiteboard")</button>
     </div>
 
 </AuthorizeView>
 
 
 @code {
+    
+    public bool isLang { get; set; }
+
     //CORE PROPERTIES
     private static TaskCompletionSource<object> tcs = new TaskCompletionSource<object>();
     private bool scriptLoaded = false;
@@ -106,7 +109,7 @@
     protected override async Task OnInitializedAsync()
     {
 
-
+        isLang = await Http.GetFromJsonAsync<bool>(Navigation.BaseUri + "language/getLang");
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 

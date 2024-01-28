@@ -1,19 +1,36 @@
 ﻿@inherits LayoutComponentBase
-@inject IJSRuntime JSRuntime
+@inject HttpClient Http
+@inject NavigationManager Navigation
+<style>
+    body {
+        background-color: @(isDark ? "#141414" : "white");
+    }
+
+</style>
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-            <input type="button" value="Toggle Dark Mode" onclick="toggleDarkMode()" />
+        <div class="top-row px-4" style="background-color: @(isDark ? "#141414" : "white");">
+            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">@(isLang ? "About" : "O nas")</a>
+            <EditForm Model="this" OnValidSubmit="ToggleDarkMode" method="post" FormName="darkmode">
+                <button type="submit">Toggle Dark Mode</button>
+            </EditForm>
+            <EditForm Model="this" OnValidSubmit="ToggleLang" method="post" FormName="getlang">
+                <button type="submit">Toggle Lang</button>
+            </EditForm>
         </div>
-
+        
+        <CascadingValue Value="@isLang">
         <article>
             @Body
         </article>
+        </CascadingValue>
+
+   
     </main>
 </div>
 
@@ -24,8 +41,30 @@
 </div>
 
 @code {
+    private bool isDark;
+
+    private bool isLang;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isDark = await Http.GetFromJsonAsync<bool>("darkmode/getDark");
+        isLang = await Http.GetFromJsonAsync<bool>("language/getLang");
+    }
+
     private async Task ToggleDarkMode()
     {
-        await JSRuntime.InvokeVoidAsync("toggleDarkMode");
+        isDark = !isDark;
+        await Http.PostAsJsonAsync(Navigation.BaseUri + "darkmode/toggleMode", isDark);
+        StateHasChanged(); // Może być potrzebne do odświeżenia UI
     }
+
+    private async Task ToggleLang()
+    {
+        isLang = !isLang;
+        await Http.PostAsJsonAsync(Navigation.BaseUri + "language/toggleLang", isLang);
+        StateHasChanged();
+    }
+
 }
+
+   

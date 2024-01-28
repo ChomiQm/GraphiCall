@@ -60,6 +60,20 @@ namespace GraphiCall.Controllers
             return Ok(project);
         }
 
+        [HttpGet("getProjectByBudgetId/{budgetId}")]
+        public async Task<ActionResult<ProjectDto>> GetProjectByBudgetId([FromRoute] string budgetId)
+        {
+            var project = await _context.Projects
+                .FirstOrDefaultAsync(p => p.BudgetId == budgetId);
+
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(project);
+        } 
+
         [HttpPost("addProject/{userId}")]
         public async Task<ActionResult<ProjectDto>> CreateProject([FromRoute] string userId, [FromBody] ProjectDto projectDto)
         {
