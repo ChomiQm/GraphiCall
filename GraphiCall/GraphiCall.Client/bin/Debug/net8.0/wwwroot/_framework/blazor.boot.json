@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "GraphiCall.Client",
   "resources": {
-    "hash": "sha256-kUHj+Tuc9ZwzLSyBHNKtMBzVijER7hAo7qWMcpc/b8E=",
+    "hash": "sha256-ypcmX12wLGM2wkIG7JjRoTt2tUO1i+9OBy1qZeU4hE0=",
     "jsModuleNative": {
       "dotnet.native.8.0.0.5mx3bzum09.js": "sha256-LjLDIz9+J7uuiwMlQ4HbNx2BnSpphOtO2MwkoI28vdI="
     },
@@ -219,10 +219,10 @@
       "mscorlib.wasm": "sha256-cDuLeL3OCtVtiid/dyex1MVgbuzDSRwZxKzuP2Dp4mg=",
       "netstandard.wasm": "sha256-A0h86SDieTMoU/wU2JTszWCsUmMuguDcbap0b0BzsmI=",
       "System.Private.CoreLib.wasm": "sha256-/0DNIm/T0C07X7Tuz5uR8JvVCoAfEE2MnfPUSjyS9xc=",
-      "GraphiCall.Client.wasm": "sha256-elEHvF/Nuoi5asFttwFll/y0vU+urmROHV2aJasNNhI="
+      "GraphiCall.Client.wasm": "sha256-7PR8yPMjH+oL5anTZdMuNEt2WBygMcylMFZ8Xsoi2rY="
     },
     "pdb": {
-      "GraphiCall.Client.pdb": "sha256-GkvyovVm8O1cxZPpuu5/RSmzcIdZEgxMOj92TnInUIY="
+      "GraphiCall.Client.pdb": "sha256-khqRxv/M8T3U+naWaZv7dKWS0O6zz+UXCgN7Dv51YWc="
     }
   },
   "cacheBootResources": true,

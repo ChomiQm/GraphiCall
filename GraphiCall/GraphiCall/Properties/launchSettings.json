@@ -36,14 +36,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
-    },
-    "Production": {
-      "commandName": "Project",
-      "launchBrowser": false,
-      "applicationUrl": "https://graphicall.azurewebsites.net",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Production"
-      }
+    }
     }
   }
 }

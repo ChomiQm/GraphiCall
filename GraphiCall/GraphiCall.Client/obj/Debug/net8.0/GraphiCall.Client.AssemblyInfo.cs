@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GraphiCall.Client")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5fecdfc64d8b1514068e20278353645c491f127b")]
 [assembly: System.Reflection.AssemblyProductAttribute("GraphiCall.Client")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GraphiCall.Client")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
