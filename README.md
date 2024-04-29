@@ -65,3 +65,16 @@ Update the appsettings.json file with your actual configuration details:
 ```
 3.**Run the application**
 Open the project in Visual Studio Community, build the solution, and run it. Make sure your database server is configured and running.
+
+## Important Note
+
+Before running the application, it is essential to apply database migrations to ensure the database schema is up-to-date with the current application model. You can perform migrations using the following steps:
+
+**Run the migration command**
+- In the Package Manager Console, type:
+```bash
+Update-Database
+```
+- This command will apply the latest migrations to your database as defined in the Entity Framework configuration.
+
+Failure to perform these migrations may result in runtime errors due to schema mismatches between the application and the database.
